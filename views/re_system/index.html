@@ -1,0 +1,857 @@
+{%extends "re_base.html"%}
+<!-- 타이틀 -->
+{%block title%}EMR{%endblock%}
+<!-- 스타일 -->
+{%block link%}
+	<link rel="stylesheet" type="text/css" href="/static/css/re_system/jquery.dataTables.min.css">
+{%endblock%}
+<!-- 자바스크립트 -->
+{%block script%}{%endblock%}	
+<!-- 헤더 추가 -->
+{%block header%}{%endblock%}
+<!-- 내용 -->
+{%block content%}
+<style type="text/css">
+body {
+    font: 12px Arial;
+}
+#monitoring_tab_btn, #admin_tab_btn{
+	float:left;
+	width:100px;
+	height:30px;
+	text-align: center;
+	line-height: 30px;
+	background-color: #BDBDBD;
+	border-radius: 10px 10px 0 0;
+	color:white;
+}
+#admin_tab_btn{
+	background-color: #5B9BD5;
+}
+#layer_select{
+	float:right;
+	width:100px;
+}
+#top_left{height:360px;width:380px;float:left;padding: 10px;}
+#top_center_one{height:380px;width:12%;float:left;margin-left:10px;}
+#top_center_two{height:380px;width:18%;float:left;margin-left:10px;}
+#top_right{height:380px;width:806px;float:right;margin-left:10px;}
+#bottom_left{height:410px;width:600px;float:left;}
+#bottom_center{height:410px;width:571px;float:left;margin-left:10px;}
+#bottom_right{height:410px;width:581px;float:right;}
+.content_div{
+	border:1px solid black;
+}
+#beacon_left {
+    width: 50%;
+    max-height: 380px;
+    overflow: auto;
+    float: left;
+}
+#beacon_right{
+	width: 50%;
+    height: 380px;
+  	float: left;
+}
+td{
+	text-align: center;
+}
+table {
+    width: 100%;
+    border: 1px solid gainsboro;
+    border-collapse: collapse;
+}
+.beacon_table {
+    border: 1px solid gainsboro;
+}
+#well_tag{
+	width: 100%;
+	float: left;
+}
+#gateway{
+	width: 100%;
+	float: left;
+}
+</style>
+<a href="/re_main/"><div id="monitoring_tab_btn">모니터링</div></a>
+<a href="/re_system/"><div id="admin_tab_btn">관리</div></a>
+<select id="layer_select"></select>
+<div class="clear" style="clear:both"></div>
+
+<div id="admin" style="border:1px solid #BDBDBD;">
+	<div style="margin:10px;">
+		<div id="top_left" class="content_div">
+			<p style='text-align:center;    margin-bottom: 20px;'>등록/관리</p>
+			<div>
+				<p style='float: left;width: 80px;text-align: center;margin: 5px 0;'>종류</p>
+				<select name="" id="test_id" style='height: 26px; width: 251px; margin: 5px 0; text-align-last: center;'>
+						<option value="select">-선택-</option>
+						<option value="welltag">welltag</option>
+						<option value="gateway">gateway</option>
+						<option value="beacon">beacon</option>
+				</select>
+			</div>
+			<div>
+				<p style='float: left;width: 80px;text-align: center;margin: 5px 0;'>ID</p>
+				<input type="text" style='height: 20px; width: 247px; margin: 5px 0; text-align-last: center;' id='tag_id'>
+			</div>
+			<div>
+				<p style='float: left;width: 80px;text-align: center;margin: 5px 0;'>이름</p>
+				<input type="text" style='height: 20px; width: 247px; margin: 5px 0; text-align-last: center;' id='tag_name'>
+			</div>
+			<div>
+				<p style='float: left;width: 80px;text-align: center;margin: 5px 0;'>층</p>
+				<input type="text" style='height: 20px; width: 247px; margin: 5px 0; text-align-last: center;' id='tag_layer'>
+			</div>
+			<div style='width: 326px; margin: 0 auto; margin-top: 10px; text-align: center;'>
+				<p id='save' onclick='save()' style='width: 100px;height: 37px; float: left; border: 1px solid gray; border-radius: 5px; line-height: 3;'>저장</p>
+				<p id='cancel' onclick='cancel()' style='width: 100px;height: 37px; float: left;border: 1px solid gray; border-radius: 5px; line-height: 3; margin-left: 10px;'>취소</p>
+				<p id='delete' onclick="delete_a()" style='width: 100px;height: 37px; float: left;border: 1px solid gray; border-radius: 5px; line-height: 3; margin-left: 10px;'>삭제</p>
+			</div>
+		</div>
+		<div id="top_center_one" class="content_div">
+			<div id='well_tag'>
+				<div id='well_tag'>
+					<p>Well-tag</p>
+				</div>
+				<table id='welltag_table'>
+					<thead>
+						<tr>
+							<td>ID</td>
+							<td>이름</td>
+							<td>층</td>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>	
+		<div id="top_center_two" class="content_div">
+			<div id='gateway'>
+				<p>gateway</p>
+			</div>
+			<table id='gateway_table'>
+				<thead>
+					<tr>
+						<td>번호</td>
+						<td>접속시간</td>
+						<td>층</td>
+						<td>작동</td>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+		
+		<div id="top_right" class="content_div">
+			<div id='beacon_left'>
+				<div>
+					<p>Beacon</p>
+				</div>
+				<table id='beacon_table'>
+					<thead>
+						<tr>
+							<td class='beacon_table' style='width: 90px;'>ID</td>
+							<td class='beacon_table' style='width: 75px;'>이름</td>
+							<td class='beacon_table' style='width: 30px;'>층</td>
+							<td class='beacon_table' style='width: 120px;'>x,y 좌표값</td>
+							<td class='beacon_table' style='width: 50px;'>작동</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div id='beacon_right'>
+				<canvas id="canvas" width="403" height="380" style="float:left;"></canvas>
+				<input type="text"  value='' style='display: none;' id='Beacon_seq'>
+				<input type="text"  value='' style='display: none;' id='Beacon_x'>
+				<input type="text"  value='' style='display: none;' id='Beacon_y'>
+			</div>
+		</div>
+		<div class="clear" style="clear:both"> </div>
+	</div>
+	<div style="margin:10px;">
+		<div id="bottom_left" class="content_div">
+			<div>
+				<div>
+					<p>전체 회원 관리</p>
+					<input type="text">
+					<div>
+						<p>조회</p>
+					</div>
+				</div>
+				<table id='mbs_table'>
+					<thead>
+						<tr>
+							<td>아이디</td>
+							<td>근무 층</td>
+							<td>직책</td>
+							<td>이름</td>
+							<td>연락처</td>
+							<td>편집</td>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+		<div id="bottom_center" class="content_div">
+			<div>
+				<div>
+					<p>승인 관리</p>
+					<input type="text">
+					<div>
+						<p>조회</p>
+					</div>
+				</div>
+				<table id='permission_table'>
+					<thead>
+						<tr>
+							<td>번호</td>
+							<td>아이디</td>
+							<td>근무 층</td>
+							<td>직책</td>
+							<td>이름</td>
+							<td>연락처</td>
+							<td>관리</td>
+							<td>편집</td>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+		<div id="bottom_right" class="content_div">
+			<div>
+				<p>병원 등록</p>
+			</div>
+			<div>
+				<p>병원 이름</p>
+				<input type="text">
+			</div>
+
+		</div>
+		<div class="clear" style="clear:both"> </div>
+	</div>
+</div>
+<!-- 병진 작업 -->
+	<script>
+		var active_on  = "<p>ON</p>"
+		var active_off  = "<p style='color:red'>OFF</p>"
+		$(function(){
+			canvasx = 403;
+			canvasy = 380;
+			layer_type = location.href.split("=")[1];
+
+			$.ajax({
+				url:"/re_system/layer",
+				contentType:"application/json",
+				method:"get",
+				success:function(data){
+					for(var i = 0 ; i<data.length;i++){
+						var layer = data[i].layer 
+						var location = data[i].location 
+						$("#layer_select").append("<option value= "+layer+">"+location+"</option>");
+					}
+					if(layer_type == undefined){
+		                layer = 3;
+		            }else{
+		                layer = layer_type;
+		            }
+					$("#layer_select").val(layer);
+					imgview();
+					welltaginfo();
+					gatewayinfo();
+					beaconInfo();
+					membershipInfo();
+					permissionInfo();
+				}
+			})
+			$("#layer_select").change(function(){	
+				var layer = $("#layer_select").val();
+				location.href = "/re_system?layer=" + layer;
+			})
+			$("#welltag_table").on("click","tr",function(){
+				var data = table1.row($(this)).data();
+				console.log(data)
+				var welltag_id = data.welltag_id;
+
+				var name = data.name;
+				var layer = data.layer;
+				var welltag = welltag_id.substring(0, 5);
+				console.log(welltag)
+				$("#test_id").val("welltag")
+				$("#tag_id").val(welltag_id)
+				$("#tag_name").val(name)
+				$("#tag_layer").val(layer)
+			})
+			$("#beacon_table").on("click","tr",function(){
+				var str = ""
+				var tdArr = new Array();
+
+				var tr = $(this);
+				var td = tr.children();
+				td.each(function(i){
+	                tdArr.push(td.eq(i).text());
+	            });
+	            // console.log("배열에 담긴 값 : "+tdArr);
+	            var beacon_id = td.eq(0).text();
+	            var name = td.eq(1).text();
+	            var layer = td.eq(2).text();
+	            var x = td.eq(3).text();
+	            var y = td.eq(4).text();
+	            var use_state = td.eq(3).text();
+
+	            $("#test_id").val("beacon")
+				$("#tag_id").val(beacon_id)
+				$("#tag_name").val(name)
+				$("#tag_layer").val(layer)
+
+
+				var color = null;
+
+			    $("#beacon_table tr").css({"background-color":"white"})
+
+			    tr.css({"background-color":"#bdbdbd"})
+
+			    $('canvas').setLayers({
+			        strokeStyle: "black",
+			        // strokeWidth: 0,
+			        // radius: 9,
+			        // concavity: 1,
+			    }).drawLayers();
+
+			    $('canvas').setLayer(beacon_id, {
+			        strokeStyle: "#36c",
+			        // strokeWidth: 2,
+			        radius: 20,
+			    }).drawLayers();
+			    // $('canvas').setLayer(beacon_id+"_txt", {
+			    //     strokeStyle: "black",
+			        
+			    //     radius: 15,
+			    // }).drawLayers();
+			})
+		})
+		function save(){
+			var save_confirm = confirm("저장 하시겠습니까?");
+			var select_choice = $("#test_id").val()
+			var id = $("#tag_id").val()
+			var name = $("#tag_name").val()
+			var layer = $("#tag_layer").val()
+			data = {"select_choice":select_choice, "id":id, "name":name, "layer":layer}
+
+			if(save_confirm == true){
+				$.ajax({
+					url:"/re_system/save_information",
+					contentType:"application/json",
+					method:"post",
+					data:JSON.stringify(data),
+					success:function(data){
+						if(true) {
+							alert("저장 되었습니다")
+							location.href = "/re_system";
+			            } else {
+			            	alert("저장 되지 않았습니다.")
+			            	location.href = "/re_system?layer=" + layer;
+			            }
+					}
+				})
+			} 
+		} 
+		function delete_a(){
+			var delete_confirm =confirm("삭제 하시겠습니까?");
+			var select_choice = $("#test_id").val()
+			var id = $("#tag_id").val()
+
+			data = {"select_choice":select_choice, "id":id}
+			if(delete_confirm == true){
+				$.ajax({
+					url:"/re_system/delete_information",
+					contentType:"application/json",
+					method:"delete",
+					data:JSON.stringify(data),
+					success:function(data){
+						if(true) {
+							alert("삭제 되었습니다")
+							location.href = "/re_system";
+			            } else {
+			            	alert("삭제 되지 않았습니다.")
+			            	location.href = "/re_system?layer=" + layer;
+			            }
+					}
+				})
+			} else {
+				alert("취소 되었습니다.")
+				location.href = "/re_system?layer=" + layer;
+			}
+		}
+		function imgview(){
+			var layer = $("#layer_select").val();
+
+			$.ajax({
+				url:"/re_system/req_map?layer="+layer,
+				contentType:"application/json",
+		        method:"get",
+		        success:function(data){
+		        	console.log(data)
+		        	var map = data[0].map
+		        	$("#canvas").css({"background-image":"url("+map+")","background-size":"100% 100%"})
+		        }
+			})
+			$.ajax({
+				url:"/re_system/location_beacon_info?layer="+layer,
+				contentType:"application/json",
+				method:"get",
+				success:function(data){
+					$('canvas').removeLayers().drawLayers(); 
+
+					for (var i = 0; i<data.length; i++) {
+						// console.log(data[i])
+						var beacon_seq = data[i].beacon_seq
+						// console.log(beacon_seq)
+						var beacon_id = data[i].beacon_id
+						// console.log(beacon_id)
+						var loc_x = data[i].loc_x
+						var loc_y = data[i].loc_y
+						var x_value = loc_x*(canvasx/10);
+						var y_value = canvasy - loc_y*(canvasy/10);
+						
+						visibleBeacon(x_value, y_value, beacon_id, beacon_seq);
+					};
+				}
+			})
+		}
+		function visibleBeacon(x_value, y_value, beacon_id, beacon_seq){
+
+			var x = x_value
+			var y = y_value
+
+			if($("canvas").getLayer(beacon_id)) {
+				$("canvas").setLayer(beacon_id, {
+					x:x,
+					y:y
+				}).drawLayers();
+				$("canvas").setLayer(beacon_id + "_txt", {
+		            x: x,
+		            y: y
+		        }).drawLayers();
+			}
+			else {
+				$("canvas").drawArc({
+			        layer: true,
+			        name: beacon_id,
+			        draggable: true,
+			        bringToFront: true,
+			        strokeStyle: "black",
+			    	strokeWidth: 1,
+			        x: x,
+			        y: y,
+			        radius: 9,
+			        concavity: 1,
+			        data: {id: beacon_id},
+			        click:function(){
+		        		setupBeaconInfo(beacon_seq)
+		        	},
+			        dragstart: function(layer) {
+			        	setupBeaconInfo(beacon_seq)
+			        	setupLocation(layer)
+			        },
+			         drag: function(layer) {
+			         	// setupBeaconInfo(beacon_seq)
+		                setupLocation(layer)
+		            },
+					dragstop: function(layer) {
+						var layer1 = $("#layer_select").val();
+			       		setupLocation(layer)	
+			       		setupBeaconInfo(beacon_seq)
+
+			       		if($("#Beacon_x").val() != x_value && $("#Beacon_y").val() != y_value){
+			       			if(confirm("비콘위치를 적용하시겠습니까?") == true){
+			       				updateBeaconInfo()
+			       				location.href = "/re_system?layer=" + layer1;
+			       			} else {
+			       				setupBeaconInfo(beacon_seq)
+			       				// $("canvas").removeLayer(beacon_id).drawLayers();
+			       				visibleBeacon(x_value, y_value, beacon_id, beacon_seq)
+			       			}
+			       		}
+					}
+	    		})
+	    		.drawText({
+			        layer: true,
+			        name: beacon_id + "_txt",
+			        fillStyle: '#000',
+			        fontStyle: "bold",
+			        strokeWidth: 0,
+			        x: x,
+			        y: y,
+			        fontSize: '5pt',
+			        text: beacon_id.substring(4)
+			    }); 
+			}
+		}
+
+		function setupBeaconInfo(beacon_seq){
+			$.ajax({
+		        url:"/system/indi_beacon_info?beacon_seq="+beacon_seq,
+		        contentType:"application/json",
+		        method:"get",
+		        success:function(data){
+		        	var beacon_seq = data[0].beacon_seq
+		            var beacon_id = data[0].beacon_id
+		            var beacon_name = data[0].beacon_name
+		            var beacon_mac = data[0].beacon_mac
+					var layer = data[0].layer
+		            var loc_x = data[0].loc_x
+		            var loc_y = data[0].loc_y
+		            console.log(loc_x)
+		            $("#Beacon_seq").val(beacon_seq)
+		            $("#Beacon_x").val(loc_x)
+            		$("#Beacon_y").val(loc_y)
+            		$("#test_id").val("beacon")
+					$("#tag_id").val(beacon_id)
+					$("#tag_name").val(beacon_name)
+					$("#tag_layer").val(layer)
+		        }
+		    })
+		}
+		function updateBeaconInfo() {
+			var layer_select = $("#layer_select").val()
+			var beacon_seq = $("#Beacon_seq").val()
+			var beacon_id = $("#tag_id").val()
+			var layer = $("#tag_layer").val()
+			var locX = $("#Beacon_x").val()
+			var locY = $("#Beacon_y").val()
+			console.log(beacon_id)
+			console.log(layer)
+			data = {"beacon_seq":beacon_seq, "beacon_id":beacon_id, "layer":layer,"loc_x":locX,"loc_y":locY};
+
+			$.ajax({
+		        url:"/system/update_beacon",
+		        contentType:"application/json",
+		        data:JSON.stringify(data),
+		        method:"put",
+		        success:function(data){
+		        	// console.log(data)
+					if(true){
+						alert("수정되었습니다")
+						if(layer != layer_state){
+							 $("canvas").removeLayer(beacon_id).drawLayers();  
+							 $("canvas").removeLayer(beacon_id+"_txt").drawLayers();  
+						}
+					}
+
+		        }
+		    })
+		}
+
+		function setupLocation(beaconLayer){
+			x_pos1 = beaconLayer['x'].toString()
+			y_pos1 = beaconLayer['y'].toString()
+			x_pos = (x_pos1)/40.3;
+			y_pos = (380 - y_pos1)/38
+			$("#Beacon_x").val(x_pos.toFixed(2))
+			$("#Beacon_y").val(y_pos.toFixed(2))
+
+			txt_layer = $("canvas").getLayer(beaconLayer.data.id + "_txt");
+		    txt_layer.x = beaconLayer.x;
+		    txt_layer.y = beaconLayer.y;
+		}
+		function welltaginfo(){
+			var layer = $("#layer_select").val();
+			console.log(layer)
+			$.ajax({
+				url:"/re_system/welltaginfo?layer="+layer,
+				contentType:"application/json",
+				method:"get",
+				success:function(data){
+					var TableList = data
+
+					table1 = $("#welltag_table").DataTable({
+	                   "destroy":true,
+				        "ordering":false,
+				        "searching": false,
+				        "info": false,
+				        "bLengthChange": false,
+				        "data": TableList,
+				        "paging": false,
+	                    "columns":[
+	                        {"data":"welltag_mac"},
+	                        {"data":"welltag_id"},
+	                        {"data":"location"},
+	                    ]
+	                });
+				}
+			})
+		}
+		function gatewayinfo(){
+			// var layer = $("#layer_select").val();
+
+			$.ajax({
+				url:"/re_system/gatewayinfo",
+				contentType:"application/json",
+				method:"get",
+				success:function(data){
+					var TableList = data
+
+					table = $("#gateway_table").DataTable({
+	                   "destroy":true,
+				        "ordering":false,
+				        "searching": false,
+				        "info": false,
+				        "bLengthChange": false,
+				        "data": TableList,
+				        "paging": false,
+	                    "columns":[
+	                        {"data":"seq"},
+	                        {"data":"ping_time"},
+	                        {"data":"layer"},
+	                        {"data":"layer"}
+	                    ]
+	                });
+				}
+			})
+		}
+		function beaconInfo(){
+			var layer = $("#layer_select").val();
+
+			$.ajax({
+				url:"/re_system/beaconInfo?layer=" + layer,
+				contentType:"application/json",
+				method:"get",
+				success:function(data){
+					for(var i = 0 ; i<data.length;i++){
+						var id = data[i].beacon_id;
+						var name = data[i].beacon_name;
+						var layer = data[i].layer;
+						var x = data[i].loc_x;
+						var y = data[i].loc_y;
+						var use_state = data[i].use_state;
+						var location = data[i].location;
+						if(use_state){
+							use_state = active_on;
+						} else {
+							use_state = active_off;
+						}
+						$("#beacon_table tbody").append("<tr><td class='beacon_table'>"+id+"</td><td class='beacon_table'>"+name+"</td><td class='beacon_table'>"+location+"</td><td class='beacon_table'>X:"+x+", Y:"+y+"</td><td class='beacon_table'>"+use_state+"</td></tr>");
+					}
+				}
+			})
+		}
+		function membershipInfo(){
+			var layer = $("#layer_select").val();
+
+			$.ajax({
+				url:"/re_system/membershipInfo?layer="+layer,
+				contentType:"application/json",
+				method:"get",
+				success:function(data){
+					var TableList = data
+
+					table = $("#mbs_table").DataTable({
+	                   "destroy":true,
+				        "ordering":false,
+				        "searching": false,
+				        "info": false,
+				        "bLengthChange": false,
+				        "data": TableList,
+				        "paging": false,
+	                    "columns":[
+	                        {"data":"user_id"},
+	                        {"data":"layer"},
+	                        {"data":"user_position"},
+	                        {"data":"user_name"},
+	                        {"data":"user_phone"},
+	                        {"defaultContent": "<button id='mbs_delete'>삭제</button>"},
+	                    ]
+	                });
+				}
+			})
+		}
+		function permissionInfo(){
+			var layer = $("#layer_select").val();
+
+			$.ajax({
+				url:"/re_system/permissionInfo?layer="+layer,
+				contentType:"application/json",
+				method:"get",
+				success:function(data){
+					var TableList = data
+
+					table = $("#permission_table").DataTable({
+	                   "destroy":true,
+				        "ordering":false,
+				        "searching": false,
+				        "info": false,
+				        "bLengthChange": false,
+				        "data": TableList,
+				        "paging": false,
+	                    "columns":[
+	                    	{"data":"user_seq"},
+	                        {"data":"user_id"},
+	                        {"data":"layer"},
+	                        {"data":"user_position"},
+	                        {"data":"user_name"},
+	                        {"data":"user_phone"},
+	                        {"defaultContent": "<button id='mbs_delete'>승인</button>"},
+	                        {"defaultContent": "<button id='mbs_delete'>삭제</button>"},
+	                    ]
+	                });
+				}
+			})
+		}
+	</script>
+{%endblock%}
+<!Doctype html>
+<html>
+<head>
+	<script type="text/javascript" src="/js/jquery.js"></script>
+	<title>메인</title>
+</head>
+<body>
+	<div id="header">
+		<div id="header_area">
+		</div>
+	</div>
+	<div id="content">
+		<div id="content_area">
+			
+		</div>
+	</div>
+	<div id="footer">
+		<div id="footer_area">
+
+		</div>
+	</div>
+	
+	
+	<!-- <div>
+		<p>EMR monitoring system</p>
+		<script type="text/javascript">
+		$(function(){		
+			$.ajax({
+				method:"get",
+				contentType:"application/json",
+				url:"/main/layer",
+				success:function(data){
+					for(var i=0; i<data.length; i++){
+						$("#layer_info").append("<option value="+data[i].layer+">"+data[i].layer+"F</option>")
+					}
+					getLayerUseWelltag();
+					imgView();
+				}
+			})
+
+			$("#layer_info").change(function(){	
+				imgView();
+			})
+			
+		})
+		function getLayerUseWelltag(){
+			var layer = $("#layer_info").val();
+			//해당 층 사용가능한 웰태그 정보 select태그에 적용
+			$.ajax({
+				method:"get",
+				contentType:"application/json",
+				url: "/main/welltaginfo",
+				success:function(data){
+					// console.log(data)
+					for(var i=0; i<data.length; i++){
+						$("#welltag_info").append("<option value="+data[i]+">"+data[i].welltag_id+"</option>")
+					}
+				}
+			})
+		}
+		function imgView(){
+			var layer = $("#layer_info").val();
+			// console.log(layer);
+			$.ajax({
+				url:"/main/map_img?layer="+layer,
+				method:"get",
+				contentType:"application/json",
+				success:function(data){		
+					var map = data[0].map;
+       				$("#canvas").css({"background-image":"url("+map+")","background-size":"100% 100%"})
+				}
+			})	
+		}
+		
+		</script>
+		층정보
+		<select id="layer_info">
+		</select>
+	</div>
+	<div></div>
+	<div>
+		환자 정보 추가<br>
+		<script type="text/javascript">
+		
+
+		</script>
+		<table>
+			<tr>
+				<td><span>환자 이름</span></td>
+				<td><input type="text" /></td>
+			</tr>
+			<tr>
+				<td><span>환자 번호</span></td>
+				<td><input type="text" /></td>
+			</tr>
+			<tr>
+				<td><span>나이</span></td>
+				<td><input type="text"></td>
+			</tr>
+			<tr>
+				<td>성별</td>
+				<td>
+					<label for="male"> 
+						<input type="radio" name="gender" value="male" id="male">
+						<span>남자</span>
+					</label>
+					<label>
+						<input type="radio" name="gender" value="female" id="female">
+						<span>여자</span>
+					</label>	
+				</td>
+			</tr>
+			<tr>
+				<td>
+					착용 가능한 웰태그
+				</td>
+				<td>
+					<select id="welltag_info">
+						<option>----------------</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2"><input type="button" value="button" style="width:100%"> </td>
+			</tr>
+		</table>
+	</div>
+	<div>
+		모니터링<br>
+		<script type="text/javascript">
+		</script>
+		<canvas width="500px" height="300px" id="canvas"></canvas>
+	</div>
+	<div>
+		graph
+		<script type="text/javascript">
+		</script>
+		<div></div>
+		<div></div>
+	</div>
+	<div>
+		환자 테이블
+		<script type="text/javascript">
+		</script>
+		<table></table>
+	</div> -->
+</body>
+</html>

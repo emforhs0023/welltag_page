@@ -1,0 +1,46 @@
+{%extends "base.html"%}
+
+<html>
+<head>
+	{%block title%}
+		시스템 관리
+	{%endblock%}
+
+	{%block link%}
+		<link rel="stylesheet" type="text/css" href="/static/css/system/system_management.css">
+	{%endblock%}
+
+  	{%block script%}{%endblock%}
+</head>
+<body>
+	{%block content%}
+		<div id="main">
+			<div id="main_area">
+				<div id="well_tag_img">
+					<a href="system/welltag_setting">
+						<img src="/static/img/well_tag_menu.png" >
+					</a>
+				</div>
+		<!-- 		<div id="seneor_img">
+					<a href="system/sensortag_setting">
+						<img src="/static/img/sensor_tag_menu.png">
+					</a>
+				</div> -->
+				<div id="beacon_img">
+					<a href="system/beacon_setting">
+						<img src="/static/img/beacon_menu.png">
+					</a>
+				</div>
+				<!-- <div id="gateway_img">
+					<a href="system/gateway_setting">
+						<img src="/static/img/gateway_menu.jpg">
+					</a>
+				</div> -->
+			</div>
+		</div>
+
+	{%endblock%}
+
+	
+</body>
+</html>

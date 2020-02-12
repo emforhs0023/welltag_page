@@ -1,0 +1,82 @@
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="/static/js/lib/jquery.min.js"></script>
+	<script type="text/javascript">
+	$(function(){
+		allWelltagInfo()
+	})
+
+
+	//층 클릭 이벤트(hidden value 설정)
+	function test(value){
+		var layer = $("#layer").val(value);
+	}
+	
+	function allWelltagInfo(){
+		var layer = $("#layer").val();
+
+		$.ajax({
+	        url:"/monitoring/all_welltag_info?layer="+layer,
+	        contentType:"application/json",
+	        method:"get",
+	        success:function(data){
+	            console.log(data)
+       		}
+    	})
+	}
+	function testtype(value){
+		var layer = $("#layer").val();
+
+		if(value == "전체"){
+			$.ajax({
+		        url:"/monitoring/all_welltag_info?layer="+layer,
+		        contentType:"application/json",
+		        method:"get",
+		        success:function(data){
+		            console.log(data)
+	       		}
+	    	})
+		}else if(value == "의료인"){
+			$.ajax({
+		        url:"/monitoring/medical_person_welltag_info?layer="+layer,
+		        contentType:"application/json",
+		        method:"get",
+		        success:function(data){
+		            console.log(data)
+	        	}
+  			})
+		}else if(value == "의료기기"){
+		    $.ajax({
+		        url:"/monitoring/medical_equiment_welltag_info?layer="+layer,
+		        contentType:"application/json",
+		        method:"get",
+		        success:function(data){
+		            console.log(data)
+		        }
+		    })
+		}else if(value == "환자"){
+		    $.ajax({
+		        url:"/monitoring/patient_welltag_info?layer="+layer,
+		        contentType:"application/json",
+		        method:"get",
+		        success:function(data){
+		            console.log(data)
+		        }
+		    })
+		}
+		
+	}
+	</script>
+</head>
+<body>
+	<input type="hidden" value="1" id="layer">
+	<input type="button" onClick="test(3)">
+	<select onChange="testtype(this.value)">
+		<option value="전체">전체</option>
+		<option value="의료인">의료인</option>
+		<option value="의료기기">의료기기</option>
+		<option value="환자">환자</option>
+	</select>
+</body>
+</html>

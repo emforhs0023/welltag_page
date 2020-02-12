@@ -1,0 +1,97 @@
+@import url(https://fonts.googleapis.com/earlyaccess/notosanskr.css);
+*{
+	margin: 0px;
+	padding: 0px;
+	font-family: 'Noto Sans KR', sans-serif;
+}
+#content {
+    margin: 0px auto;
+    width: 100%;
+    height: 672px; 
+}
+#header{
+	background-color: #4da9d9;
+	width: 100%;
+	height: 100px;
+	z-index: 101;
+}
+#logo{
+	width:95%;
+	height: 99px;
+	margin-left:10px;
+	padding: 10px;
+}
+#ID_password{
+	margin: 0 auto; 
+	width: 279px;
+}
+
+#ID_password #ID {
+	text-align: center;
+}
+
+#ID_password #ID p{
+	float: left;
+	margin-right: 26px;	
+	font-weight: 700;
+}
+
+#ID_password #password {
+	text-align: center;
+	margin-top: 5px;
+}
+
+#ID_password #password p{
+	float: left;
+	margin-right: 10px;	
+	font-weight: 700;
+}
+#login_submit{
+	background-color: #bfbfbf;
+	padding: 5px 10px;
+	border: none;
+	color:white;
+	border-radius: 5px;
+}
+#txtId{
+	border: 1px solid #ccc;
+    border-radius: 4px;
+	box-sizing: border-box;
+}
+#txtPwd{
+	border: 1px solid #ccc;
+    border-radius: 4px;
+	box-sizing: border-box;
+}
+a{
+	color:black;
+}
+a:hover{
+	color:grey;
+}	
+#footer{
+	background-color: #4da9d9;
+    color: white;
+}
+#footer{
+    background-color: #4da9d9;
+    color: white;
+    float: right;
+    width: 100%;
+}
+#footer span{
+   float: right;
+}
+#content_area{
+	margin-top: 178px;
+	height: 672px;                                   
+}		
+
+@media screen and (max-width:1900px) {
+
+	
+	#content_area{
+		margin-top: 178px;
+   		height: 616px;
+	}	
+}

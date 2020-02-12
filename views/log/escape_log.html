@@ -1,0 +1,791 @@
+{%extends "base.html"%}
+{%block title%}
+	상태 히스토리
+{%endblock%}
+
+{%block link%}
+<link rel="stylesheet" type="text/css" href="/static/css/monitoring/falling_log.css">
+{%endblock%}
+
+{%block script%}
+<script type="text/javascript" src="/static/js/lib/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+
+var canvasx = 570;
+var canvasy = 562;
+var areax = 10;
+var areay = 10; 
+
+var table = $("#log_table").DataTable({})
+console.log(location.href)
+$(function(){
+	viewAllFallingLogInfo()
+
+	// $.ajax({
+	// 	url:"/log/selectDate",
+	// 	method:"get",
+	// 	contentType:"application/json",
+	// 	success:function(data){
+	// 		for(var i =0; i<data.length; i++){
+				
+	// 			 $("#select_date").append("<option value="+data[i].falling_date_format+">"+data[i].falling_date_format+"</option>")
+	// 		}
+	// 		$("#select_date").on("change", function(){
+	// 			var date =   $("#select_date").val()
+	// 			$("#filter").find("option:eq(0)").prop("selected", true);
+	// 			if(date == "all"){
+	// 				viewAllFallingLogInfo()
+	// 			}else{
+	// 				viewDateFallingLogInfo(date)
+	// 			}
+	// 		})
+	// 	}
+	// })
+
+	$("#log_table").on("click","#view_btn",function(){
+		var data = table.row($(this).parents("tr")).data();
+	
+		var layer = data.layer;
+		var x = data.x
+		var y = data.y
+		var name = data.user_name
+		var color = null;
+    	var fillcolor = null;
+
+		var x_value = x *(canvasx/10);
+        var y_value = canvasy - y * (canvasy/10); 
+
+		$.ajax({
+			url:"/log/req_layer_map?layer="+layer,
+	        contentType:"application/json",
+	        method:"get",
+	        success:function(data){
+	        	var map = data[0].map
+	        	$("#canvas").css({"background-image":"url("+map+")","background-size":"100% 100%"})
+	        	$("canvas").removeLayers().drawLayers(); 
+	   			$("canvas").drawArc({
+			        layer: true,
+			        fillStyle: "tomato",
+			        strokeWidth: 4,
+			        x: x_value,
+			        y: y_value,
+			        fontSize: '12pt',
+			        radius: 10
+			    });
+			}		
+		})
+		$("#falling_location_form").dialog({
+            height:"auto",
+            width:"600px",
+            modal : false
+        })
+	})
+})
+
+function viewnameFallingLogInfo(){
+	$("#filter").find("option:eq(0)").prop("selected", true);
+	table.destroy();
+	table = $("#log_table").DataTable({
+  			"processing": true,
+	        "serverSide": true,
+	        "ordering":false,
+	        "filter": false,
+	        "pageLength": 15,
+	        "bLengthChange": false,
+	        "orderMulti": false,
+		    "ajax": {
+		        "url": '/log/fallingLogInfo',
+		        "type": 'post',
+		        "datatype": "json"
+		    },
+		    "columnDefs":[
+	            {
+	            	"targets":[0],
+	            	"render":function(data){
+	            		FallingDate = new Date(data);
+						var FallingDate_format = moment(FallingDate).format("YYYY-MM-DD hh:mm:ss");	
+						return FallingDate_format;
+	            	}
+	            },
+
+	            {
+	            	"targets": [3],
+	            	"render":function(data){
+	            		// return data;
+	            		if(data == 1){
+	            			return "낙상";
+	            		}else if(data == 3){
+	            			return "욕창"
+	            		}else if(data == 6){
+	            			return "탈원"
+	            		}
+	            	}
+	            }
+
+	        ],
+		    "columns":[
+		        {"data":"falling_date","width":"100px"},
+		        {"data":"layer","width":"300px"},
+		        {"data":"user_name","width":"200px"},
+		        {"data":"state","width":"300px"},
+		        {"defaultContent":"<input type='button' id = 'view_btn' class='view_btn'>","width":"120px"}
+       		]
+	});	
+}
+function viewAllFallingLogInfo(){
+	$("#select_date").find("option:eq(0)").prop("selected", true);
+	$("#filter").find("option:eq(0)").prop("selected", true);
+	table.destroy();
+	table = $("#log_table").DataTable({
+  			"processing": true,
+	        "serverSide": true,
+	        "ordering":false,
+	        "filter": false,
+	        "pageLength": 15,
+	        "bLengthChange": false,
+	        "orderMulti": false,
+		    "ajax": {
+		        "url": '/log/fallingLogInfo',
+		        "type": 'post',
+		        "datatype": "json"
+		    },
+		    "columnDefs":[
+	            {
+	            	"targets":[0],
+	            	"render":function(data){
+	            		FallingDate = new Date(data);
+						var FallingDate_format = moment(FallingDate).format("YYYY-MM-DD hh:mm:ss");	
+						return FallingDate_format;
+	            	}
+	            },
+
+	            {
+	            	"targets": [3],
+	            	"render":function(data){
+	            		// return data;
+	            		if(data == 1){
+	            			return "낙상";
+	            		}else if(data == 3){
+	            			return "욕창"
+	            		}else if(data == 6){
+	            			return "탈원"
+	            		}
+	            	}
+	            }
+
+	        ],
+		    "columns":[
+		        {"data":"falling_date","width":"100px"},
+		        {"data":"location","width":"300px"},
+		        {"data":"user_name","width":"200px"},
+		        {"data":"state","width":"300px"},
+		        {"defaultContent":"<input type='button' id = 'view_btn' class='view_btn'>","width":"120px"}
+       		]
+	});	
+
+}
+
+function viewDateFallingLogInfo(date){
+	table.destroy();
+	table = $("#log_table").DataTable({
+			"processing": true,
+	        "serverSide": true,
+	        "ordering":false,
+	        "filter": false,
+	        "pageLength": 15,
+	        "bLengthChange": false,
+	        "orderMulti": false,
+	        "ajax": {
+		        "url": '/log/dateFallingLogInfo',
+		        "type": 'post',
+		        "datatype": "json",
+		        "data": function ( data ) {
+		        	data.date = date
+		        }
+			},
+			"columnDefs":[
+	            {
+	            	"targets":[0],
+	            	"render":function(data){
+	            		FallingDate = new Date(data);
+						var FallingDate_format = moment(FallingDate).format("YYYY-MM-DD hh:mm:ss");	
+						return FallingDate_format;
+	            	}
+	            },
+	          	{
+	            	"targets": [3],
+	            	"render":function(data){
+	            		// return data;
+	            		if(data == 1){
+	            			return "낙상"
+	            		}
+	            		else if(data == 3){
+	            			return "욕창"
+	            		}
+	            	}
+	            }
+	        ],
+		    "columns":[
+		        {"data":"falling_date"},
+		        {"data":"layer"},
+		        {"data":"user_name"},
+		        {"data":"state"},
+		        {"defaultContent":"<input type='button' id = 'view_btn' class='view_btn'>","width":"120px"}
+       		]
+	});
+}
+function filter_change(){
+	var value = $("#filter").val();
+	filter(value);
+};
+
+function filter(value){
+	var date = $("#select_date").val();
+	//전체
+	if(value == "0"){
+		table.destroy();
+		table = $("#log_table").DataTable({
+			"processing": true,
+	        "serverSide": true,
+	        "ordering":false,
+	        "filter": false,
+	        "pageLength": 15,
+	        "bLengthChange": false,
+	        "orderMulti": false,
+		    "ajax": {
+		        "url":"/log/allSetTimeInfo",
+		        "type": "post",
+		        "datatype": "json",
+		        "data":function(data){
+		        	data.date = date;
+		        }
+		    },
+		    "columnDefs":[
+	            {
+	            	"targets":[0],
+	            	"render":function(data){
+	            		FallingDate = new Date(data);
+						var FallingDate_format = moment(FallingDate).format("YYYY-MM-DD hh:mm:ss");	
+						return FallingDate_format;
+	            	}
+	            },
+	            {
+	            	"targets": [3],
+	            	"render":function(data){
+	            		// return data;
+	            		if(data == 1){
+	            			return "낙상"
+	            		}
+	            		else if(data == 3){
+	            			return "욕창"
+	            		}
+	            	}
+	            }
+	        ],
+		    "columns":[
+		        {"data":"falling_date"},
+		        {"data":"location"},
+		        {"data":"user_name"},
+		        {"data":"state"},
+		        {"defaultContent":"<input type='button' id = 'view_btn' class='view_btn'>","width":"120px"}
+			]
+		});
+	}else if(value == "1"){
+		// console.log(table)
+		table.destroy();
+		table = $("#log_table").DataTable({
+			"processing": true,
+	        "serverSide": true,
+	        "ordering":false,
+	        "filter": false,
+	        "pageLength": 15,
+	        "bLengthChange": false,
+	        "orderMulti": false,
+		    "ajax": {
+		        "url":"/log/fallingSetTime",
+		        "type": "post",
+		        "datatype": "json",
+		        "data":function(data){
+		        	data.date = date;
+		        }
+		    },
+		    "columnDefs":[
+	            {
+	            	"targets":[0],
+	            	"render":function(data){
+	            		FallingDate = new Date(data);
+						var FallingDate_format = moment(FallingDate).format("YYYY-MM-DD hh:mm:ss");	
+						return FallingDate_format;
+	            	}
+	            },
+	            {
+	            	"targets": [3],
+	            	"render":function(data){
+	            		if(data == 1 ){
+	            			return "낙상"
+	            		}
+	            		else if(data == 3){
+	            			return "욕창"
+	            		}
+	            	}
+	            }
+	        ],
+		    "columns":[
+		        {"data":"falling_date"},
+		        {"data":"location"},
+		        {"data":"user_name"},
+		        {"data":"state"},
+		        {"defaultContent":"<input type='button' id = 'view_btn' class='view_btn'>","width":"120px"}
+			]
+		});
+	}else if(value == "2"){
+		table.destroy();
+		table = $("#log_table").DataTable({
+			"processing": true,
+	        "serverSide": true,
+	        "ordering":false,
+	        "filter": false,
+	        "pageLength": 15,
+	        "bLengthChange": false,
+	        "orderMulti": false,
+		    "ajax": {
+		        "url":"/log/bedsoreSetTime",
+		        "type": "post",
+		        "datatype": "json",
+		        "data":function(data){
+		        	data.date = date;
+		        }
+		    },
+		    "columnDefs":[
+	            {
+	            	"targets":[0],
+	            	"render":function(data){
+	            		FallingDate = new Date(data);
+						var FallingDate_format = moment(FallingDate).format("YYYY-MM-DD hh:mm:ss");	
+						return FallingDate_format;
+	            	}
+	            },
+	            {
+	            	"targets": [3],
+	            	"render":function(data){
+	            		// return data;
+	            		if(data == 1){
+	            			return "낙상"
+	            		}
+	            		else if(data == 3){
+	            			return "욕창"
+	            		}
+	            	}
+	            }
+	        ],
+		    "columns":[
+		        {"data":"falling_date"},
+		        {"data":"location"},
+		        {"data":"user_name"},
+		        {"data":"state"},
+		        {"defaultContent":"<input type='button' id = 'view_btn' class='view_btn'>","width":"120px"}
+			]
+		});
+	}
+}
+
+</script>
+<style type="text/css">
+	#content_area{
+		clear: both;
+	    margin: 0 auto;
+	    width: 1200px;
+	    height: 500px;
+	}
+
+	#select_date{
+		border: 1px solid gray;
+	    border-radius: 5px;
+	    margin-top: 20px;
+	    margin-bottom: 20px;
+	    width: 150px;
+	    height: 30px;
+	    padding-left: 10px;
+	    float: left;
+	    border-radius: 5px 0px 0px 5px;
+	}
+	#filter{
+		border: 1px solid gray;
+	    border-radius: 5px;
+	    margin-top: 20px;
+	    margin-bottom: 20px;
+	    width: 150px;
+	    height: 30px;
+	    padding-left: 10px;	
+	    float: right;
+	}
+	#log_table_form{
+		border-top: 2px solid gray;
+		clear: both;
+	}
+	#log_table th{
+		border-bottom: 2px solid #BDBDBD !important;
+
+	}
+	#log_table td{
+		border-collapse: collapse;
+	    height: 40px;
+	    border-bottom: 2px solid #BDBDBD;
+	    font-weight: 700;
+	    text-align: center;
+	}
+	.view_btn{
+		width:25px;
+		height:25px;
+		background-image: url("/static/img/search.png" );
+		background-size:100% 100%;
+		background-color: white;
+		border: none;
+	}
+	#search_btn{
+		font-size: 18px;
+	   
+	    text-align: center;
+	    float: left;
+	   	color: white;
+	   	background-color: white;
+	    height: 30px;
+	    width: 60px;
+	    cursor: pointer;
+	    position: relative;
+	    background-size: 100% 100%;
+	    right: 23px;
+	    top: 7px;
+	    background-image: url(/static/img/MagnifyingGlass.png);
+	    width: 16px;
+	    height: 16px;
+	    border: none;
+	}
+	#viewDetails{
+	    background-color: white;
+	    border: 1px solid gray;
+	    border-radius: 0 12px 12px 0;
+	    height: 30px;
+	    position: relative;
+	    right: 16px;
+        width: 48px;
+    	font-weight: 500;
+	}
+/*	#search_btn:hover{
+		background-color:white;
+		color:gray;
+	}*/
+	#all_btn{
+		font-size:18px;
+		margin-right:10px;
+		text-align:center;
+		float:left;
+		border:1px solid gray;
+		color:white;
+		background-color: gray;
+		height:30px;
+		width:130px;
+		cursor: pointer;
+	}
+	#all_btn:hover{
+		background-color:white;
+		color:gray;
+	}
+</style>
+
+{%endblock%}
+
+{%block content%}
+<div style=" width: 100%; height: 100%;">
+	<div id="content_area">
+		<!-- <select id="select_date">
+			<option value="all">전체</option>
+		</select> -->
+
+
+		<div style="float: left;margin-top: 20px;margin-bottom: 20px;">
+			<!-- <span style ="font-size:18px;margin-right:10px;padding-left:10px;float:left;">환자 검색</span> -->
+			<!-- <input type = "text" id="search_keyword" style="border:1px solid gray; height:30px; padding-left:10px;float: left;border-radius: 12px 0px 0px 12px; border-right: none;"> -->
+			<!-- <input type ="button" id ="search_btn" onClick="SearchByName()"/>
+			<input type ="button" id ="viewDetails" onClick="viewDetails()" value="상세" /> -->
+			<!-- <input type ="button" id="all_btn" value ="전체보기" onClick="viewAllFallingLogInfo()"> -->
+			<script type="text/javascript">
+			
+			// 상세 보기 시간 select
+			$.ajax({
+				url:"/log/selectDate",
+				method:"get",
+				contentType:"application/json",
+				success:function(data){
+					// console.log(data)
+					for(var i =0; i<data.length; i++){
+						$("#vdTime").append("<option value="+data[i].falling_date_format+">"+data[i].falling_date_format+"</option>")
+					}
+					$("#vdTime").on("change", function(){
+						var date = $("#vdTime").val()
+						$("#vdLayer").find("option:eq(0)").prop("selected", true);
+						// if(date == "all"){
+						// 	viewAllFallingLogInfo()
+						// }else{
+						// 	viewDateFallingLogInfo(date)
+						// }
+					})
+				}
+			})
+			// 상세 보기 호실 layer
+			$.ajax({
+				url:"/log/selectLayer",
+				contentType:"application/json",
+				method:"get",
+				success:function(data){
+					// console.log(data)
+					for(var i = 0; i<data.length; i++){
+						$("#vdLayer").append("<option value="+data[i].layer+">"+data[i].layer+"F"+"</option>")
+					}
+					$("#vdLayer").on("change",function(){
+						var layer = $("#vdLayer").val();
+						var time = $("#vdTime").val();
+						// console.log(value)
+						// console.log(time)
+						// if(layer == "all"){
+						// 	viewAllFallingLogInfo()
+						// }else{
+
+						// 	viewAllLayerLogInfo(layer, time)
+						// }
+					})
+				}
+			})
+			// function viewAllLayerLogInfo(layer, time){
+			// 	table.destroy();
+			// 	table = $("#log_table").DataTable({
+			// 		"processing": true,
+			//         "serverSide": true,
+			//         "ordering":false,
+			//         "filter": false,
+			//         "pageLength": 15,
+			//         "bLengthChange": false,
+			//         "orderMulti": false,
+			// 	    "ajax": {
+			// 	        "url":"/log/viewAllLayerLogInfo",
+			// 	        "type": "post",
+			// 	        "datatype": "json",
+			// 	        "data":function(data){
+			// 	        	data.layer = layer;
+			// 	        	data.time = time;
+			// 			}
+			// 	    },
+			// 	    "columnDefs":[
+			//             {
+			//             	"targets":[0],
+			//             	"render":function(data){
+			//             		FallingDate = new Date(data);
+			// 					var FallingDate_format = moment(FallingDate).format("YYYY-MM-DD hh:mm:ss");	
+			// 					return FallingDate_format;
+			//             	}
+			//             },
+
+			//             {
+			//             	"targets": [3],
+			//             	"render":function(data){
+			//             		// return data;
+			//             		if(data == 1){
+			//             			return "낙상";
+			//             		}
+			            		 	
+			//             		// else if(data == 3){
+			//             		// 	return "욕창"
+			//             		// }
+			//             	}
+			//             }
+			// 		],
+			// 	    "columns":[
+			// 	        {"data":"falling_date","width":"100px"},
+			// 	        {"data":"layer","width":"300px"},
+			// 	        {"data":"user_name","width":"200px"},
+			// 	        {"data":"state","width":"300px"},
+			// 	        {"defaultContent":"<input type='button' id = 'view_btn' class='view_btn'>","width":"120px"}
+		 //       		]	
+			// 	})
+			// }
+			function viewDetails(){
+				$("#vdPopUp").dialog({
+					height:"auto",
+					width:"400px",
+					modal : true,
+					buttons: {
+						"btn1" : {
+							text : "확인",
+							id : "list",
+							click:function(){
+								var time = $("#vdTime").val();
+								var layer = $("#vdLayer").val(); 
+								var nameKeyword = $("#vdName").val();
+								console.log(nameKeyword)
+								table.destroy();
+
+								table = $("#log_table").DataTable({
+									"processing": true,
+							        "serverSide": true,
+							        "ordering":false,
+							        "filter": false,
+							        "pageLength": 15,
+							        "bLengthChange": false,
+							        "orderMulti": false,
+								    "ajax": {
+								        "url":"/log/searchName",
+								        "type": "post",
+								        "datatype": "json",
+								        "data":function(data){
+								        	data.time = time;
+								        	data.layer = layer;
+								        	data.nameKeyword = nameKeyword;
+								        }
+								    },
+								    "columnDefs":[
+							            {
+							            	"targets":[0],
+							            	"render":function(data){
+							            		FallingDate = new Date(data);
+												var FallingDate_format = moment(FallingDate).format("YYYY-MM-DD hh:mm:ss");	
+												return FallingDate_format;
+							            	}
+							            },
+							            {
+							            	"targets": [3],
+							            	"render":function(data){
+							            		// return data;
+							            		if(data == 1){
+							            			return "낙상"
+							            		}else if(data == 3){
+							            			return "욕창"
+							            		}
+							            	}
+							            }
+							        ],
+								    "columns":[
+								        {"data":"falling_date"},
+								        {"data":"layer"},
+								        {"data":"user_name"},
+								        {"data":"state"},
+								        {"defaultContent":"<input type='button' id = 'view_btn' class='view_btn'>","width":"120px"}
+									]
+								})
+								$( this ).dialog( "close" );
+							}
+						},
+						"btn2" : {
+							text : "취소",
+							id : "list1",
+							click:function(){
+								$( this ).dialog( "close" );
+							}
+						}
+					}
+				})
+			}
+			
+			function SearchByName(){
+				// var date = $("#select_date").val();
+
+				// if(date == "all"){
+				// 	date = -1;
+				// }
+
+				var keyword = $("#search_keyword").val();
+
+				table.destroy();
+
+				table = $("#log_table").DataTable({
+					"processing": true,
+			        "serverSide": true,
+			        "ordering":false,
+			        "filter": false,
+			        "pageLength": 15,
+			        "bLengthChange": false,
+			        "orderMulti": false,
+				    "ajax": {
+				        "url":"/log/searchFallingLogByName",
+				        "type": "post",
+				        "datatype": "json",
+				        "data":function(data){
+				        	// data.date = date;
+				        	data.keyword = keyword;
+				        }
+				    },
+				    "columnDefs":[
+			            {
+			            	"targets":[0],
+			            	"render":function(data){
+			            		FallingDate = new Date(data);
+								var FallingDate_format = moment(FallingDate).format("YYYY-MM-DD hh:mm:ss");	
+								return FallingDate_format;
+			            	}
+			            },
+			            {
+			            	"targets": [3],
+			            	"render":function(data){
+			            		// return data;
+			            		if(data == 1){
+			            			return "낙상"
+			            		}else if(data == 3){
+			            			return "욕창"
+			            		}
+			            	}
+			            }
+			        ],
+				    "columns":[
+				        {"data":"falling_date"},
+				        {"data":"layer"},
+				        {"data":"user_name"},
+				        {"data":"state"},
+				        {"defaultContent":"<input type='button' id = 'view_btn' class='view_btn'>","width":"120px"}
+					]
+				});
+			}
+			
+			
+			</script>
+		</div>
+	<select id="filter" onChange="filter_change()">
+		<option value="0">전체</option>
+		<option value="1">낙상</option>
+		<option value="2">욕창</option>
+	</select>
+		<div id="log_table_form">
+			<table id="log_table">
+				<thead>
+					<th>발생 시간</th>
+					<th>층</th>
+					<th>이름</th>
+					<th>상태</th>
+					<th>위치보기</th>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+
+	</div>
+</div>
+<div id="falling_location_form" title="낙상 위치 보기" style="display:none">
+	<canvas id="canvas" width="570" height="562" style="float:left;margin:10px;"></canvas>
+</div>
+ <div id="vdPopUp" title="상세보기" style="display:none">
+ 	<div>
+ 		<p>시간</p>
+ 		<select name="vdTime" id="vdTime">
+ 			<option value="all">전체</option>
+		</select>
+ 	</div>
+ 	<div>
+ 		<p>호실</p>
+ 		<select name="vdLayer" id="vdLayer">
+ 			<option value="-1">전체</option>
+		</select>
+ 	</div>
+ 	<div>
+ 		<p>이름</p>
+ 		<input type="text" id="vdName">
+ 	</div>
+ </div>	
+{%endblock%}

@@ -1,0 +1,26 @@
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="/static/js/lib/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(function(){
+
+			setInterval(countfalling, 1000)
+		})
+		function countfalling(){
+			layer = 1
+			$.ajax({
+		        url:"/monitoring/layer_location_welltag_info?layer="+layer,
+		        contentType:"application/json",
+		        method:"get",
+		        success:function(data){
+		        	console.log(data)
+		        }
+		    })
+		}
+	</script>
+</head>
+<body>
+
+</body>
+</html>

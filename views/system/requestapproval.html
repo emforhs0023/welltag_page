@@ -1,0 +1,66 @@
+{%extends "base.html"%}
+
+<html>
+<head>
+	{%block title%}
+		승인 요청
+	{%endblock%}
+
+	 {%block link%}
+	 <link rel="stylesheet" type="text/css" href="/static/css/system/requestapproval.css">
+    {%endblock%}
+
+	 {%block script%}
+	 	<script type="text/javascript" src="/static/js/requestapproval.js"></script>
+	 {%endblock%}
+</head>
+<body>
+	{%block content%}
+		
+
+		<div style=" width: 100%; height: 100%;">
+			<div id="content_area">
+			<div>
+				<input type="hidden" value="1" id="layer">
+				<select  onChange="All_select(this.value)" id="All_select">
+					<option value="전체">전체</option>
+					<option value="대상(물) 또는 이름">대상(물) 또는 이름</option>
+					<option value="착용 상태">착용 상태</option>
+					<option value="낙상 상태">낙상 상태</option>
+				</select>
+				<input id="search">
+				<button class="btn" id="btn" type="submit">
+					<img class="btn-img" src="/static/img/search.png">
+				</button>
+
+
+
+			</div>
+				<div id="table_zone">
+					 <table id="requestTable" style="text-align: center;">
+                        <thead>
+                            <tr id="TableTitle">
+                                <th>ID</th>
+                                <th>이름</th>
+                                <th>연락처</th>
+                                <th>직책</th>
+                                <th>근무 층</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                    </table>
+				</div>
+			</div>
+		</div>
+		<div id="confirm_approve" title="승인 확인" style="display:none">
+			<p>승인하시겠습니까?</p>
+		</div>
+
+		<div id="delete_approve" title="삭제 확인" style="display:none">
+			<p>삭제 하시겠습니까?</p>
+		</div>
+	{%endblock%}
+
+
+</body>
+</html>

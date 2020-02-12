@@ -1,0 +1,251 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>테스트</title>
+	<script type="text/javascript" src="../static/js/lib/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="../static/css/jquery.dataTables.min.css">
+	<script type="text/javascript" src="../static/js/lib/jcanvas.min.js"></script>
+  	<script type="text/javascript" src="../static/js/lib/jquery.dataTables.min.js"></script>
+	<script>
+		$(function(){
+
+			var ischeckBox = "<input type='checkBox' name='testCheckBox'>"
+			var from_layer = "$('#test_layer').val()"
+			var bid = "<input type ='text' id = 'bid_value' class='input_style1' value = '0'>"
+			var move = "<input type ='text' id = 'move_value' class='input_style1' value = '0'>"
+			var isfalling = "<p style='color:red'>낙상</p>"
+			var decubitus = "<p style='color:#3fbd3f'>욕창</p>"
+			var nofalling = "<p>정상</p>"
+			var active_on  = "<p>ON</p>"
+			var active_off  = "<p style='color:red'>OFF</p>"
+			var active_off  = "<p style='color:red'>OFF</p>"
+			var gender_one  = "<p>여자</p>"
+			var gender_zero  = "<p>남자</p>"
+			var low_battery = "<p style = 'color:red'>교체 요망</p>"
+			$.ajax({
+		        url:"/monitoring/req_layer",
+		        contentType:"application/json",
+		        method:"get",
+		        success:function(data){
+		            for(var i = 0; i<data.length; i++){
+		                var layer = data[i].layer;
+		                var location = data[i].location;
+		                $("#test_layer").append("<option value="+layer+">"+location+"</option>");
+		            }
+		            $("#test_layer").val(3)
+		            var layerSelect = $("#test_layer").val()
+
+		            table = $("#testTable").DataTable({
+						"processing": true,
+				        "serverSide": true,
+				        "ordering":false,
+				        "filter": false,
+				        "pageLength": 10,
+				        "bLengthChange": false,
+				        "orderMulti": false,
+					    "ajax": {
+					    	"url":"/monitoring/all_wearing_welltag_Info",
+					        "type": "post",
+					        "datatype": "json",
+					        "data":function(data){
+					        	data.layerSelect = layerSelect;
+					        }
+					    },
+					    "columnDefs":[
+						     // {
+				       //      	"targets":[0],
+				       //      	"visible": false
+				       //      },
+				    //         {
+				    //         	"targets":[5],
+				    //         	"render":function(data){
+				            		
+								// }
+				    //         },
+							{
+				            	"targets": [6],
+				            	"render":function(data){
+				            		// return data;
+				            		if(data == 1){
+				            			return active_on;
+				            		}else{
+					    				return active_off
+					    			}
+				            		 	
+				            		
+				            	}
+				            },
+				            {
+				            	"targets": [9],
+				            	"render":function(data){
+				            		return ischeckBox
+				            		 	
+				            		// else if(data == 3){
+				            		// 	return "욕창"
+				            		// }
+				            	}
+				            },
+				            {
+				            	"targets": [10],
+				            	"visible": false
+				            },
+				            {
+				            	"targets": [11],
+				            	"visible": false
+				            },
+				            {
+				            	"targets": [12],
+				            	"visible": false
+				            },
+				            {
+				            	"targets": [13],
+				            	"visible": false,
+				            	"render":function(data){
+				            		return from_layer
+				            	}
+				            },
+				            {
+				            	"targets": [14],
+				            	"visible": false,
+				            	"render":function(data){
+				            		return bid
+				            	}
+				            },
+				            {
+				            	"targets": [15],
+				            	"visible": false,
+				            	"render":function(data){
+				            		return escape
+				            	}
+				            }
+			        	],
+					    "columns":[
+						    {"data":"welltag_id", "width":"100px"},
+						    {"data":"type", "width":"150px"},
+						    {"data":"name", "width":"100px"},
+						    {"data":"location", "width":"100px"},
+						    {"data":"ward", "width":"100px"},
+						    {"data":"isFalling", "width":"150px"},
+						    {"data":"isActive", "width":"150px"},
+						    {"data":"loc_x", "width":"150px"},
+						    {"data":"loc_y", "width":"150px"},
+						    {"data":"ischeckBox", "width":"150px"},
+						    {"data":"layer", "width":"150px"},
+						    {"data":"battery", "width":"150px"},
+						    {"data":"move", "width":"150px"},
+						    {"data":"from_layer", "width":"150px"},
+						    {"data":"bid", "width":"150px"},
+						    {"data":"escape", "width":"150px"},
+						]
+				    })
+		        }
+		    })
+		})
+		
+		function start(){
+			tt = setInterval(function(){
+				loopTest(tdArr)
+			}, 1000)	
+		}
+		function stopTest(){
+			clearInterval(tt)
+		}
+		function loopTest(tdArr){
+			for(i=0; i<tdArr.length; i++){
+				var x = Math.floor(Math.random() * 9) + 1;
+		        var y = Math.floor(Math.random() * 9) + 1;
+		        var fail_down = Math.floor(Math.random() * 3) + 1;
+		        var escape = Math.floor(Math.random() * 2) + 1;
+		        tdArr[i].x = x;
+		        tdArr[i].y = y;
+		        tdArr[i].fail_down = fail_down;
+		        tdArr[i].escape = escape;
+		         $.ajax({
+					url:"/monitoring/welltag_data",
+					method : "post",
+					contentType:"application/json",	
+					data:JSON.stringify(tdArr[i]),
+					success:function(data){
+						console.log(data)
+					}
+				})
+		    }
+		}
+
+		function addTest(){
+			tdArr = [];
+			var rowData = new Array(); 
+	        // var tdArr = new Array();
+    	    var checkbox = $("input[name=testCheckBox]:checked");
+    	    console.log(checkbox)
+    	 	checkbox.each(function(i) {
+    	 		var tr = checkbox.parent().parent().eq(i);
+		        var td = tr.children();
+		                
+		        
+		        rowData.push(tr.text());
+		        console.log(rowData)
+            	
+		        var tagId = td.eq(0).text()
+		        var x = Math.floor(Math.random() * 9) + 1;
+		        var y = Math.floor(Math.random() * 9) + 1;
+				var layer = 3;
+				var from_layer = 3;
+				var battery = Math.floor(Math.random() * 100) + 1;
+				var fail_down = Math.floor(Math.random() * 9) + 1;
+				var move = td.eq(12).text()
+				var bid = td.eq(14).text()
+				var escape = Math.floor(Math.random() * 9) + 1;
+				// console.log(escape)
+				data = {"tagId":tagId,"x":x,"y":y,"layer":layer,"from_layer":from_layer,"battery": battery, "fail_down":fail_down, "move": move, "bid":bid, "escape":escape}
+				
+				tdArr.push(data);
+		        // tdArr.push(x);
+		        // tdArr.push(y);
+		        
+		    })
+	    }
+		    
+		
+	</script>
+</head>
+<body>
+	<div style='width: 100%'>
+		<div id='table_left' style='width: 50%;float: left'>
+			<select id="test_layer"></select>
+			<div id="table_zone">
+		          <table id="testTable" style="text-align: center;">
+		            <thead>
+		                <tr id="TableTitle">
+		                    <th>윌태그 ID</th>
+		                    <th onClick="selectOrder(4)" style="cursor:pointer">윌태그 착용대상(물)</th>
+		                    <th onClick="selectOrder(0)" style="cursor:pointer">이름</th>
+		                    <th>장소</th>
+		                    <th>병실</th>
+		                    <th style="cursor:pointer">낙상</th>
+		                    <th style="cursor:pointer">신호</th>
+		                    <th style="cursor:pointer">x</th>
+		                    <th style="cursor:pointer">y</th>
+		                    <th style="cursor:pointer">체크박스</th>
+		                    <th style="cursor:pointer">층</th>        
+		                    <th style="cursor:pointer">층</th>        
+		                    <th style="cursor:pointer">층</th>        
+		                    <th style="cursor:pointer">층</th>        
+		                    <th style="cursor:pointer">층</th>    
+		                    <th style="cursor:pointer">층</th>        
+		                </tr>
+		            </thead>
+		        </table>
+		    </div>
+		    <div onclick="addTest()">추가</div>
+		    <div onclick="stopTest()">중지</div>
+		    <div onclick="start()">시작</div>
+		    
+	    </div>
+
+	    <div id='table_right' style='width: 50%;float: left'>
+	    	
+	    </div>
+    </div>
+</body>
+</html>

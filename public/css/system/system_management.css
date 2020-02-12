@@ -1,0 +1,53 @@
+#content {
+    width: 100%;
+    height: 620px;
+    background-color: white;
+}
+#main_area{
+	margin: 0 auto; 
+	width: 1445px;
+	margin-top: 200px;
+}
+#well_tag_img{
+	clear: both; 
+	float: left;
+}
+#well_tag_img img{
+	margin-top: 17px;
+}
+#beacon_img{
+	float: left; 
+	margin-left: 75px;
+}
+#seneor_img a img{
+	margin-top: 17px;
+}
+#seneor_img{
+	float: left; 
+	margin-left: 75px;
+}
+#gateway_img{
+	float: left; 
+	margin-left: 75px;
+}
+    
+
+@media screen and (max-width:1900px) {
+	
+	#content {
+	    width: 100%;
+	    height: 657px;
+	    background-color: white;
+	}
+	#main_area {
+	    margin: 0 auto;
+	    width: 754px;
+	    margin-top: 107px;
+	}	
+	#well_tag_img {
+	    clear: both;
+	    float: left;
+	    margin-left: 59px;
+	}
+	
+}

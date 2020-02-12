@@ -1,0 +1,177 @@
+{%extends "base.html"%}
+<html>
+<head>
+	{%block title%}
+        탈원 히스토리
+    {%endblock%}
+	{%block link%}
+	{%endblock%}
+	{%block script%}
+	<script type="text/javascript" src="/static/js/lib/jquery.dataTables.min.js"></script>
+	<style type="text/css">
+		#content_area{
+			clear: both;
+		    margin: 0 auto;
+		    width: 1200px;
+		    height: 500px;
+		}
+		.dataTables_wrapper{
+			border-top: 2px solid gray;
+		}
+		#select_date{
+			border: 1px solid gray;
+		    border-radius: 5px;
+		    margin-top: 20px;
+		    margin-bottom: 20px;
+		    width: 150px;
+		    height: 30px;
+		    padding-left: 10px;
+		    float: left;
+		    border-radius: 5px 0px 0px 5px;
+		}
+		#filter{
+			border: 1px solid gray;
+		    border-radius: 5px;
+		    margin-top: 20px;
+		    margin-bottom: 20px;
+		    width: 150px;
+		    height: 30px;
+		    padding-left: 10px;	
+		    float: right;
+		}
+		#escape_table_form{
+		    padding-top: 30px;
+			clear: both;
+		}
+		#escape_table th{
+			border-bottom: 2px solid #BDBDBD !important;
+
+		}
+		#escape_table td{
+			border-collapse: collapse;
+		    height: 40px;
+		    border-bottom: 2px solid #BDBDBD;
+		    font-weight: 700;
+		    text-align: center;
+		}
+		.view_btn{
+			width:25px;
+			height:25px;
+			background-image: url("/static/img/search.png" );
+			background-size:100% 100%;
+			background-color: white;
+			border: none;
+		}
+		#search_btn{
+			font-size: 18px;
+		   
+		    text-align: center;
+		    float: left;
+		   	color: white;
+		   	background-color: white;
+		    height: 30px;
+		    width: 60px;
+		    cursor: pointer;
+		    position: relative;
+		    background-size: 100% 100%;
+		    right: 23px;
+		    top: 7px;
+		    background-image: url(/static/img/MagnifyingGlass.png);
+		    width: 16px;
+		    height: 16px;
+		    border: none;
+		}
+		#viewDetails{
+		    background-color: white;
+		    border: 1px solid gray;
+		    border-radius: 0 12px 12px 0;
+		    height: 30px;
+		    position: relative;
+		    right: 16px;
+	        width: 48px;
+	    	font-weight: 500;
+		}
+	/*	#search_btn:hover{
+			background-color:white;
+			color:gray;
+		}*/
+		#all_btn{
+			font-size:18px;
+			margin-right:10px;
+			text-align:center;
+			float:left;
+			border:1px solid gray;
+			color:white;
+			background-color: gray;
+			height:30px;
+			width:130px;
+			cursor: pointer;
+		}
+		#all_btn:hover{
+			background-color:white;
+			color:gray;
+		}
+	</style>
+	<script>
+		$(function(){
+			viewAllFallingLogInfo()
+			function viewAllFallingLogInfo(){
+				table = $("#escape_table").DataTable({
+					"processing": true,
+			        "serverSide": true,
+			        "ordering":false,
+			        "filter": false,
+			        "pageLength": 15,
+			        "bLengthChange": false,
+			        "orderMulti": false,
+				    "ajax": {
+				        "url": '/log/escapeInfo',
+				        "type": 'post',
+				        "datatype": "json"
+				    },
+				    "columnDefs":[
+			            {
+			            	"targets":[0],
+			            	"render":function(data){
+			            		escape_date = new Date(data);
+								var escapeDate_format = moment(escape_date).format("YYYY-MM-DD HH:mm:ss");	
+								return escapeDate_format;
+			            	}
+			            },
+			        ],
+				    "columns":[
+				        {"data":"escape_date","width":"300px"},
+				        {"data":"name","width":"200px"},
+				        {"data":"x","width":"200px"},
+				        {"data":"y","width":"200px"},
+				        {"data":"layer","width":"300px"}
+				    ]
+				})
+			}
+		})
+	</script>
+	{%endblock%}
+</head>
+<body>
+	{%block content%}
+	<div style=" width: 100%; height: 100%;">
+		<div id="content_area">
+			<div style="float: left;margin-top: 20px;margin-bottom: 20px;">
+			</div>	
+			<div id="escape_table_form">
+				<table id="escape_table">
+					<thead>
+						<th>발생 시간</th>
+						<th>이름</th>
+						<th>X</th>
+						<th>Y</th>
+						<th>층</th>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>	
+		</div>
+	</div>
+	{%endblock%}
+</body>
+</html>

@@ -1,0 +1,59 @@
+@import url(https://fonts.googleapis.com/earlyaccess/notosanskr.css);
+*{
+	margin: 0px;
+	padding: 0px;
+	font-family: 'Noto Sans KR', sans-serif;
+}
+#header{
+	background-color: #4da9d9;
+	width: 100%;
+	height: 100px;
+	z-index: 101;
+}
+#header #logo img{
+	margin-top: 18px;
+	margin-left:10px;
+	float: left;
+}
+body{
+	 background-color: white;
+}
+#header_login a{
+	color: white;
+}
+#content{
+	width: 100%;
+	height: 800px;
+	background-color: white;
+}
+#header #logo div{
+	float: left; 
+	margin-top: 72px; 
+	margin-left: 10px;
+}
+#logo{
+	float:left;
+}
+#header #logo div{
+	float: left; 
+	margin-top: 72px; 
+	margin-left: 10px;
+}
+#footer{
+    background-color: #4da9d9;
+    color: white;
+    float: right;
+    width: 100%;
+}
+#footer span{
+   float: right;
+}
+@media screen and (max-width:1900px) {
+	#menu_img{
+		position: relative;
+	    float: left;
+	    margin-left: 500px;
+	    top: 7px;
+		margin-left: 162px;
+	}
+}

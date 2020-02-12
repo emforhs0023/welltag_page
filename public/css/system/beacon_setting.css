@@ -1,0 +1,216 @@
+#content{
+	margin: 0px auto;
+    width: 100%;
+    height: 810px;	
+}
+
+#content_area{
+	clear: both;
+    margin: 0 auto;
+    width: 100%;
+    height: 500px;
+    background-color: white;
+    padding-top: 23px;
+}
+#menu_beacon_title{
+	background-color: gray;
+	border: 1px solid gray;
+    border-radius: 5px;
+    color: white;
+}
+/*.main_tag_a{
+	text-decoration: none;
+}
+#menu_well_tag{
+	float: left;
+	
+}
+#menu_sensor_tag{
+	float: left;
+}
+#menu_beacon{
+	float: left;
+}
+#menu_gateway{
+	float: left;
+}
+#menu_sensor_tag_title{
+	color: black;
+	border: 1px solid gray;
+    border-radius: 5px;	
+}
+#menu_well_tag_title{
+	color: black;
+	border: 1px solid gray;
+    border-radius: 5px;
+    
+}
+.title{
+	margin-left: 81px;
+
+    
+    width: 166px;
+    
+    text-align: center;
+    margin-bottom: 10px;
+    height: 27px;
+    
+}
+#menu_beacon_title{
+	color: white;
+	background-color: gray;
+    border: 1px solid gray;
+    border-radius: 5px;
+}
+#menu_gateway_title{
+	color: black;
+    border: 1px solid gray;
+    border-radius: 5px;
+}*/
+#content_right{
+	width: 872px;
+	float: left;
+	margin-left: 15px;
+	margin-right: 15px;
+	margin-top:10px;
+	margin-bottom:9px;
+}
+canvas{
+/*	width:977px;
+	height:760px;
+	border:1px solid black;
+	float: left;
+*/}
+#main_title{
+	text-align: center;
+    font-weight: 700;
+    font-size: 29px;
+    color: #072664;
+}
+.Beacon_title{
+	font-size: 22px;
+	font-weight: 700;
+	height:45px;
+	line-height: 45px;
+}
+.BeaconTxt{
+	padding-left:10px;
+	width:677px;
+	height:45px;
+	line-height: 45px;
+	border-radius: 10px;
+	font-size: 22px;
+	border:2px solid #BDBDBD;	
+}
+#select_layer{
+	width: 200px;
+	height: 40px;
+	padding-left: 80px;
+	font-size: 22px;
+	font-weight: 700;
+	border-radius: 10px;
+}
+#BeaconInfo{
+	margin-left: 73px;
+	width: 520px !important;
+}
+.BeaconInfo_btn{
+	margin:10px 0;
+	display: inline-block;
+	background-color: gray;
+	width:162px;
+	height:40px;
+	line-height: 40px;
+	border-radius: 10px;
+	color:white;
+	border:2px solid gray;
+	text-align: center;
+	cursor:pointer;
+	margin-top: 10px;
+}
+.BeaconInfo_btn:hover{
+	background-color: white;
+	color:gray;
+
+}
+
+.BeaconInfo_btn1{
+	display: inline-block;
+	background-color: gray;
+	width:162px;
+	height:40px;
+	line-height: 40px;
+	border-radius: 10px;
+	color:white;
+	border:2px solid gray;
+	text-align: center;
+	cursor:pointer;
+}
+.BeaconInfo_btn1:hover{
+	background-color: white;
+	color:gray;
+
+}
+
+
+@media screen and (max-width:1900px) {
+
+	#content_area {
+	    width: 100%;
+	}
+
+	#content_right{
+		width: 98%;
+		float: left;
+		margin-left: 15px;
+		margin-right: 15px;
+		margin-top:10px;
+	}
+	#BeaconInfo{
+		margin-left: 0px;
+		width: 520px !important;
+	}
+	.Beacon_title{
+		font-size: 18px;
+		font-weight: 700;
+		height:37px;
+		line-height: 45px;
+	}
+	#main_title{
+		text-align: center;
+	    font-weight: 700;
+	    font-size: 25px;
+	}
+	
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 640px) {
+	#content_area {
+	    clear: both;
+	    margin: 0 auto;
+	    width: 86%;
+	    background-color: white;
+	    padding-top: 23px;
+	}
+	.Well_TagTxt {
+	    width: 922px;
+	}
+	#content_area {
+	    width: 100%;
+	}
+	#content_left {
+	    margin-left: 0px; 
+	    width: 100%;
+	    height: 100%;
+	}
+	#Well_TagInfo{
+		margin-top: 10px;
+	}
+	#Well_TagInfo{
+		width: 922px;
+	}
+	.Well_TagInfo_btn{
+		width: 170px;
+    	height: 44px;	
+	}
+}

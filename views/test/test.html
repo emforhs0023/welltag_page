@@ -1,0 +1,107 @@
+<html>
+<head>
+<title>테스트 페이지</title>
+<script type="text/javascript" src="/static/js/lib/jquery.min.js"></script>
+<script type="text/javascript">
+    $.ajax({
+        url:"/monitoring/req_layer",
+        contentType:"application/json",
+        method:"get",
+        success:function(data){
+            console.log(data)
+        }
+    })
+    $.ajax({
+        url:"/monitoring/req_map?layer="+1,
+        contentType:"application/json",
+        method:"get",
+        success:function(data){
+            console.log(data)
+        }
+    })
+    $.ajax({
+        url:"/monitoring/layer_location_welltag_info?layer="+1,
+        contentType:"application/json",
+        method:"get",
+        success:function(data){
+            console.log(data)
+        }
+    })
+    $.ajax({
+        url:"/monitoring/all_welltag_info?layer="+1,
+        contentType:"application/json",
+        method:"get",
+        success:function(data){
+            console.log(data)
+        }
+    })
+    $.ajax({
+        url:"/monitoring/medical_person_welltag_info?layer="+1,
+        contentType:"application/json",
+        method:"get",
+        success:function(data){
+            console.log(data)
+        }
+    })
+    $.ajax({
+        url:"/monitoring/medical_equiment_welltag_info?layer="+1,
+        contentType:"application/json",
+        method:"get",
+        success:function(data){
+            console.log(data)
+        }
+    })
+    $.ajax({
+        url:"/monitoring/patient_welltag_info?layer="+1,
+        contentType:"application/json",
+        method:"get",
+        success:function(data){
+            console.log(data)
+        }
+    })
+    $.ajax({
+        url:"/monitoring/active_on?layer="+1,
+        contentType:"application/json",
+        method:"get",
+        success:function(data){
+            console.log(data)
+        }
+    })
+    $.ajax({
+        url:"/monitoring/active_off?layer="+1,
+        contentType:"application/json",
+        method:"get",
+        success:function(data){
+            console.log(data)
+        }
+    })
+    $.ajax({
+        url:"/monitoring/falling?layer="+1,
+        contentType:"application/json",
+        method:"get",
+        success:function(data){
+            console.log(data)
+        }
+    })
+    $.ajax({
+        url:"/monitoring/nofalling?layer="+1,
+        contentType:"application/json",
+        method:"get",
+        success:function(data){
+            console.log(data)
+        }
+    })
+    $.ajax({
+        url:"/monitoring/all_wearing_welltag_Info",
+        contentType:"application/json",
+        method:"get",
+        success:function(data){
+            console.log(data)
+        }
+    })
+</script>
+</head>
+<body>
+  <div>1. 전체 layer</div>  
+</body>
+</html>

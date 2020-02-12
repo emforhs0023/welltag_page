@@ -1,0 +1,73 @@
+{%extends "system_base.html"%}
+<html>
+<head>
+	{%block title%}
+		Beacon 관리
+	{%endblock%}
+
+	{%block link%}
+	<link rel="stylesheet" type="text/css" href="/static/css/system/beacon_setting.css">
+
+	{%endblock%}
+
+  	{%block script%}
+  	<script type="text/javascript" src="/static/js/BeaconAdmin.js"></script>
+
+  	{%endblock%}
+</head>
+<body>
+	{%block content%}
+	<!-- <div id="content_area">
+		<div style="margin: 0 auto;width: 1003px;">
+	 			<div id="menu_well_tag">
+	 				<a href="/system/welltag_setting" class="main_tag_a"><p class="title" id="menu_well_tag_title">Well-Tag 관리</p></a>
+	 			</div>
+
+	 			<div id="menu_sensor_tag">
+	 				<a href="/system/sensortag_setting" class="main_tag_a"><p class="title" id="menu_sensor_tag_title">Sensor-Tag 관리</p></a>
+	 			</div>
+
+	 			<div id="menu_beacon">
+	 				<a href="/system/beacon_setting" class="main_tag_a"><p class="title" id="menu_beacon_title">beacon 관리</p></a>
+	 			</div>
+
+	 			<div id="menu_gateway">
+					<a href="/system/gateway_setting" class="main_tag_a"><p class="title" id="menu_gateway_title">gateway 관리</p></a>
+				</div>
+		</div> -->
+	
+		<div id="content_left" style="width:979px;float:left;text-align:center">
+			<canvas id="canvas" style="margin:10px;"></canvas>
+		</div>
+
+		<div id="content_right" style="float:right">
+			<!-- <div id="main_title">
+				<p>Beacon</p>
+				<p>관리</p>
+			</div> -->
+			<div id = "BeaconInfo">
+					<div>
+						<select id = "select_layer">
+						</select>
+					</div>					
+					<p class="Beacon_title">번호</p><input type="text" id = "Beacon_seq" name="" class ="BeaconTxt"/>
+					<p class="Beacon_title">ID</p><input type="text" id = "Beacon_id" name="" class ="BeaconTxt">
+					<p class="Beacon_title">MAC Address</p><input type="text" id = "Beacon_Mac" name="" class ="BeaconTxt"/>
+					<p class="Beacon_title">NAME</p><input type="text" id = "Beacon_Name" name="" class ="BeaconTxt"/>
+					<p class="Beacon_title">층</p><input type="text" id = "Beacon_layer" name="" class ="BeaconTxt"/>
+					<p class="Beacon_title">*X 좌표값</p><input type="text" id = "Beacon_x" name="" class ="BeaconTxt"/>
+					<p class="Beacon_title">*Y 좌표값</p><input type="text" id = "Beacon_y" name="" class ="BeaconTxt"/>
+					<p class="BeaconInfo_btn" onclick="updateBeaconInfo()">저장</p>
+					<p class="BeaconInfo_btn" onclick="deleteBeaconInfo()">삭제</p>
+					<p class="BeaconInfo_btn" onclick="addBeaconInfo()">새로 만들기</p>
+<!-- 					<p class="BeaconInfo_btn1" onclick="saveBeaconLocation()">현재 배치 저장</p>
+					<p class="BeaconInfo_btn1" onclick="deleteBeaconLocation()">배치 정보 삭제</p>
+					<p class="BeaconInfo_btn1" onclick="relocationBeaconInfo()">이전 배치로</p> -->
+					<script type="text/javascript"></script>
+				</div>	
+		</div>
+	<!-- </div> -->
+	{%endblock%}
+
+</body>
+</html>

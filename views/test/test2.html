@@ -1,0 +1,167 @@
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="/static/js/lib/jquery.min.js"></script>
+	<script type="text/javascript">
+		//웰태그 정보 요청
+		// $(function(){
+		// 	var data = {"tagId":"W00018","x":8,"y":8,"layer":1,"battery": 100, "fail_down":1, "move": 1}
+		// 	$.ajax({
+		// 		url:"/monitoring/welltag_data",
+		// 		method : "post",
+		// 		contentType:"application/json",
+		// 		data:JSON.stringify(data),
+		// 		success:function(data){
+		// 			console.log(data)
+		// 		}
+		// 	})
+		// })
+		// var tagId = $("#tag_id_value").val();
+		// var x = $("#loc_x_value").val();
+		// var y = $("#loc_y_value").val();
+		// var layer = $("#layer_value").val();
+		// var battery = $("#battery_value").val();
+		// var fail_down = $("#fail_down_value").val();
+		// var move = $("#move_value").val();
+
+		function testFunction(){
+			var tagId = $("#tag_id_value").val();
+			/*var x = Math.floor(Math.random() * 9) + 1;
+			var y = Math.floor(Math.random() * 9) + 1;*/
+			var x = $("#loc_x_value").val();
+			var y = $("#loc_y_value").val();
+			var layer = $("#layer_value").val();
+			var from_layer = $("#from_layer_value").val();
+			var battery = $("#battery_value").val();
+			var fail_down = $("#fail_down_value").val();
+			var move = $("#move_value").val();
+			var bid = $("#bid_value").val();
+			var escape = $("#escape_value").val();
+/*			console.log("tagId : " + tagId)		
+			console.log("x : " + x)		
+			console.log("y : " + y)		
+			console.log("layer : " + layer)		
+			console.log("battery : " + battery)		
+			console.log("fail_down : " + fail_down)		
+			console.log("move : " + move)	*/
+			var data = {"tagId":tagId,"x":x,"y":y,"layer":layer,"from_layer":from_layer,"battery": battery, "fail_down":fail_down, "move": move, "bid":bid, "escape":escape}	
+			
+			$.ajax({
+				url:"http://1.234.51.99:9501/monitoring/welltag_data",
+				method : "post",
+				contentType:"application/json",
+				data:JSON.stringify(data),
+				success:function(data){
+					console.log(data)
+				}
+			})
+		}
+
+		function testFunction2(){
+			var tagId = $("#sensor_tagid").val();
+			var type = $("#sensor_type").val();
+			var value = $("#sensor_value").val();
+			var value2 = $("#sensor_value2").val();
+			var battery = $("#sensor_battery").val();
+
+			
+			var data = {"tagId":tagId,"type":type,"val1":value,"val2":value2,"ba":battery}
+
+			$.ajax({
+				url:"/monitoring/sensor_welltag_data",
+				method : "post",
+				contentType:"application/json",
+				data:JSON.stringify(data),
+				success:function(data){
+					console.log(data)
+				}
+			})
+		}
+	</script>
+	<style type="text/css">
+		.input_style1{
+			width:130px;
+			height: 40px;
+			text-align: center;
+			font-weight: 600;
+			font-size: 17px;
+		}
+		.input_style2{
+			width:200px;
+			height: 40px;
+			text-align: center;
+			font-weight: 600;
+			font-size: 17px;	
+		}
+		#test1_table, #test2_table{
+			width:1100px;
+			border:1px solid black;
+			border-collapse: collapse;
+		}
+		#test1_table th,#test2_table th{
+			/*width:1200px;*/
+			border:1px solid black;
+			height: 30px;
+		}
+
+	</style>
+</head>
+<body>
+	<h2>1. 웰태그 구동 TEST</h2>
+	<table id = "test1_table">
+		<thead>
+			<tr>
+				<th>Welltag_id</th>
+				<th>Location_x</th>
+				<th>Location_y</th>
+				<th>Layer</th>
+				<th>from_layer</th>
+				<th>Battery</th>
+				<th>Fail_down</th>
+				<th>Move</th>
+				<th>bid</th>
+				<th>escape</th>
+				<th>Run</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type ="text" id = "tag_id_value" class="input_style1" value = "W00011"></td>
+				<td><input type ="text" id = "loc_x_value" class="input_style1" value = "1"></td>
+				<td><input type ="text" id = "loc_y_value" class="input_style1" value = "1"></td>
+				<td><input type ="text" id = "layer_value" class="input_style1" value = "1"></td>
+				<td><input type ="text" id = "from_layer_value" class="input_style1" value = "1"></td>
+				<td><input type ="text" id = "battery_value" class="input_style1" value = "100"></td>
+				<td><input type ="text" id = "fail_down_value" class="input_style1" value = "0"></td>
+				<td><input type ="text" id = "move_value" class="input_style1" value = "0"></td>
+				<td><input type ="text" id = "bid_value" class="input_style1" value = "0"></td>
+				<td><input type ="text" id = "escape_value" class="input_style1" value = "0"></td>
+				<td><input type ="button" class="input_style1" onClick="testFunction()"></td>
+			</tr>
+		</tbody>
+	</table>
+	<h2>2. 센서 태그 구동 TEST</h2>
+	<table id = "test2_table">
+		<thead>
+			<tr>
+				<th>Welltag_id</th>
+				<th>type</th>
+				<th>Value1</th>
+				<th>Value2</th>
+				<th>battery</th>
+				<th>Run</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type = "text" id = "sensor_tagid" class = "input_style2"></td>
+				<td><input type = "text" id = "sensor_type" class = "input_style2"></td>
+				<td><input type = "text" id = "sensor_value"class = "input_style2"></td>
+				<td><input type = "text" id = "sensor_value2" class = "input_style2"></td>
+				<td><input type = "text" id = "sensor_battery" class = "input_style2"></td>
+				<td><input type ="button" class="input_style2" onClick="testFunction2()"></td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

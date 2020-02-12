@@ -1,0 +1,144 @@
+<html>
+<head>
+
+	<title>
+		{%block title%}{%endblock%}
+	</title>
+	<link rel="stylesheet" type="text/css" href="/static/css/base.css">
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/jquery.dataTables.min.css">
+	<script type="text/javascript" src="/static/js/lib/jquery.min.js"></script>
+  	<script type="text/javascript" src="/static/js/lib/jcanvas.min.js"></script>
+  	<script type="text/javascript" src="/static/js/lib/jquery.dataTables.min.js"></script>
+  	<script type="text/javascript" src="/static/js/lib/sugar-1.4.1.min.js"></script>
+  	<script type="text/javascript" src="/static/js/lib/moment.js"></script>
+  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  	<script type="text/javascript">
+	  	$(function(){
+			printClock()				
+		})
+
+		function printClock(){
+			var clock =  $("#time")
+			var date = new Date();
+
+			var year = date.getFullYear();
+			// console.log(year)
+			var day = (date.getMonth()+1)+" / "+(date.getDate());
+			// console.log(day)
+
+			var amPm = "AM"
+			var Hours = addZeros(date.getHours(),2)
+			var Minutes = addZeros(date.getMinutes(),2)
+			var Seconds = addZeros(date.getSeconds(),2)
+			
+			if(Hours >= 12){
+				amPm = "PM";
+				Hours = addZeros(Hours-12,2)
+			}
+
+			clock.html(year+" / "+day+"<br />"+amPm+" "+Hours + " : " + Minutes + " : " + Seconds)
+			
+			setTimeout("printClock()",1000);
+
+		}
+
+		function addZeros(num, digit) { // 자릿수 맞춰주기
+			  var zero = '';
+			  num = num.toString();
+			  if (num.length < digit) {
+			    for (i = 0; i < digit - num.length; i++) {
+			      zero += '0';
+			    }
+			  }
+			  return zero + num;
+		}
+  	</script>
+</head>
+    {%block link%}{%endblock%}
+  	{%block script%}{%endblock%}	
+<body>
+	<div id="header">
+		<div id="logo">
+			<a href="/monitoring" style="color: black; text-decoration: none;"><img src="/static/img/logo.png" ></a>
+			<!-- <div>낙상모니터링 시스템</div> -->
+		</div>
+
+		<div id="menu_img">
+			<style>
+			#main_menu li{
+				display: inline;
+			}
+			#main_menu li .menu_img{
+				padding:3px 5px 3px 5px;
+				border:2px solid #4da9d9;
+			}
+			#main_menu li .menu_img:hover{
+				border-radius: 10px;
+				border:2px solid white;
+			}
+			</style>
+			<ul id="main_menu">
+				
+				<li><a href="/monitoring"><img class="menu_img" src="/static/img/fall.png"></a></li>
+				<!-- <li><a href="/monitoring/sensor"><img class="menu_img" src="/static/img/sensor_monitoring.png"></a></li> -->
+				<li><a href="/monitoring/wearing_welltag_info"><img class="menu_img" src="/static/img/welltag_wearing.png"></a></li>
+				<li><a href="/log"><img class="menu_img" src="/static/img/history.png"></a></li>
+				<li><a href="/log/escape"><img class="menu_img" src="/static/img/escape.png"></a></li>		
+				{% if auth %}
+				<li><a href="/system"><img class="menu_img" src="/static/img/system_setting.png"></a></li>	
+				{% endif %}
+			</ul>
+			
+			<!-- <div id="Well_Tag">
+				<a href="/monitoring/wearing_welltag_info">
+					<img id="Well_Tag_img" src="/static/img/윌태그정보.jpg">
+				</a>
+			</div> -->
+
+			<!-- <div id="management">
+				<a href="/system">
+					<img id="management_img" src="/static/img/System_Administration_base.jpg">
+				</a>
+			</div> --> 
+		</div>
+
+		<div id="header_right">
+			<div id="MyPAGE_Logout">
+				{% if auth %}
+				<a href="/system/requestapproval">
+					<p>승인요청</p>
+				</a>
+				<p>|</p>
+				{% endif %}
+				<!-- <a href="/mypage">
+					<p>마이페이지</p>
+				</a>
+				<p>|</p> -->
+				<form style="float:right;" method="POST" action="/login/logout">
+					<input type="submit" value="로그아웃" style="border:0; margin-top: 3px;background-color: #4da9d9;cursor:pointer; color:white">
+				</form>
+			</div>
+
+			<div id="time"></div>	
+		
+			</div>
+			{%block header%}{%endblock%}
+		</div>
+
+	<div id="content">
+			{%block content%}{%endblock%}
+	</div>
+</div>
+	{%block footer%}
+	<div id="footer">
+		
+		<div id="footer">
+			<span>ⓒ 2018 FSRNT Co,Ltd All Rights reserved</span>
+		</div>
+	    
+		
+	</div>
+	{%endblock%}
+</body>
+</html>

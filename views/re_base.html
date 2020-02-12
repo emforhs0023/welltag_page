@@ -1,0 +1,52 @@
+<!Doctype html>
+<html>
+<head>
+	<title>
+		{%block title%}{%endblock%}
+	</title>
+	<style type="text/css">
+		@import url(https://fonts.googleapis.com/earlyaccess/notosanskr.css);
+		*{
+			padding:0;
+			margin:0;
+			font-family: 'Noto Sans KR', sans-serif;
+		}
+		#header{
+			background-color: #5B9BD5;
+			height:70px;
+			color:white;
+		}
+		#header_area{
+			line-height: 70px;
+			margin:0 20px;
+		}
+	</style>
+	<!-- <link rel="stylesheet" type="text/css" href="/static/css/base.css"> -->
+	<link rel="stylesheet" href="/css/jquery-ui.css">
+	<script type="text/javascript" src="/js/jquery.js"></script>
+	<script type="text/javascript" src="/js/jquery-ui.js"></script>
+  	<script type="text/javascript" src="/js/jcanvas.js"></script>
+  	<script type="text/javascript" src="/js/jquery.dataTables.min.js"></script>
+  	<script type="text/javascript" src="/js/sugar.min.js"></script>
+  	<script type="text/javascript" src="/js/moment.js"></script>
+  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  	<script src="https://d3js.org/d3.v4.min.js"></script>
+	{%block link%}{%endblock%}
+  	{%block script%}{%endblock%}	
+</head>
+<body>
+	<div id = "header">
+		<div id = "header_area" style="width:1800px;margin:0 auto">
+			<h1>Well-Tag Service System</h1>
+		</div>
+		{%block header%}{%endblock%}
+	</div>
+	<div id = "content" style="width:1800px;margin:10px auto;">
+		{%block content%}{%endblock%}
+	</div>
+	<div id = "footer" style="background-color:gray;">
+		<div id="footer" style="width:1800px;margin:0 auto">
+			<span>ⓒ 2017 FSRNT Co,Ltd All Rights reserved</span>
+		</div>
+	</div>
+</body>

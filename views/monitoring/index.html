@@ -1,0 +1,651 @@
+{%extends "base.html"%}
+
+<html>
+<head>
+	{%block title%}
+		낙상 모니터링
+	{%endblock%}
+
+	{%block link%}
+	<link rel="stylesheet" type="text/css" href="/static/css/monitoring/monitoring.css">
+	{%endblock%}
+
+	{%block script%}
+	<script type="text/javascript" src="socket.io/socket.io.js"></script>
+	<!-- <script type="text/javascript" src="http://certi.fsrnt.com:9000/socket.io/socket.io.js"></script> -->
+	<script type="text/javascript" src="/static/js/positionFallAdmin.js"></script>
+	<script type="text/javascript" src="/static/js/lib/jquery.dataTables.min.js"></script>
+	<script type="text/javascript">
+	var	user_id = "{{user_id}}"
+	// console.log(user_id)
+	</script>
+  	{%endblock%}
+</head>
+<body>
+	{%block content%}
+<!-- 		<input type = "hidden" value = "" id = "session_id"> -->
+		<div id="content_left" style="float:left;width:979px;text-align:center">
+			<canvas id="canvas"  style="margin:10px;"></canvas>
+		</div>
+		<div id="content_right" style="float:right;">
+			<div>
+				<p style="float:left;color:red;line-height:40px;font-weight:500">※회색 태그 이름은 신호가 단절된 태그의 최종위치를 나타냅니다.</p>
+				<div id="menu">
+					<select id = "select_layer">
+					</select>
+				</div>
+			</div>
+			<input type="hidden" value="1" id="layer">
+			<style>
+				#main_searching{
+					float: left;
+				    border-radius: 5px 0px 0px 5px;
+				    border: 1px solid gray;
+				    width: 100px;
+				    margin-top: 20px;
+				    height: 31px;
+				    text-align-last: center;
+				}
+				.dataTables_wrapper .dataTables_info{
+					display: none;
+				}
+				#escape_table_paginate{
+					float: none;
+					text-align: center;
+				}
+				.dataTables_wrapper .dataTables_paginate{
+					padding-top: 1.25em;
+				}
+				.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+					border:0px;
+					background:none;
+				}
+				.dataTables_wrapper .dataTables_paginate .paginate_button{
+					padding: 0px;
+				}
+			</style>
+			<div style="clear:both;height:50px;margin-bottom:10px">
+<!-- 				<select id="main_searching">
+                        <option value="0">전체</option>
+                        <option value="1">착용대상(물)</option>
+                        <option value="2">이름</option>
+                        <option value="3">호실</option>
+                </select>
+                <input type="text" id="search_keyword" style="float:left;margin-top: 20px;height: 31px; border:1px solid gray; border-left: none; border-radius: 0px 5px 5px 0px; padding-left: 5px;">
+        		<input type ="button" id ="search_btn" onClick="SearchByName()"style=" background: url(/static/img/MagnifyingGlass.png); background-size: 100% 100%;width: 18px;height: 18px;border: none;position: relative;right: 25px;top: 26px; cursor: pointer; float: left;"> -->
+				<select id="wearing_type" class="sub_select" onChange="wearingType(this.value)">
+                        <option value="all"><span>전체</span></option>
+                        <option value="patient">환자</option>
+                        <option value="medical_person">의료인</option>
+                        <option value="medical_equiment">의료기구</option>   
+                </select>
+                <p id='numtest'>
+                	
+                </p>
+                <!-- <script>
+                	var yy = $("#numtest").html()
+                	yy = Math.floor(Math.random() * 9) + 1
+                	console.log(yy)
+                </script> -->
+				<script>
+				var noActive ="<p style='color:red;'>off</p>"	
+				var falling ="<p style='color:red;'>낙상</p>"
+				var decubitus = "<p style='color:#3fbd3f;font-weight:700'>욕창</p>"
+				var escape = "<p style = 'color:red'>탈원</p>"
+				var low_battery = "<p style = 'color:red'>교체 요망</p>"
+				setInterval(function() {
+			        escape_count();
+			    }, 5000);
+
+				function escape_count(){
+					$.ajax({
+						url:"/monitoring/escape_count",
+						contentType:"application/json",
+				        method:"get",
+				        success:function(data){
+				        	var count = data[0].count
+				        	$("#escape_val").html("탈원확인("+count+")")
+				        	if(count >= 1){
+				        		$("#escape_val").css("background-color"," #7f7f7f")
+				        		$("#escape_val").css("color"," #ffff00")
+				        	} else {
+				        		$("#escape_val").css("background-color","#f2f2f2")
+				        		$("#escape_val").css("color"," #353535")
+				        	}
+				        }
+					})
+				}
+
+				function SearchByName(){
+					var type = $("#main_searching").val();
+					console.log(type)
+					
+					var layer = $("#select_layer").val();
+
+					var keyword = $("#search_keyword").val();
+
+					table.destroy();
+
+					table = $("#welltagTable").DataTable({
+						"processing": true,
+				        "serverSide": true,
+				        "ordering":false,
+				        "filter": false,
+				        "pageLength": 15,
+				        "bLengthChange": false,
+				        "orderMulti": false,
+					    "ajax": {
+					    	"url":"/monitoring/searchFallingLogByName",
+					        "type": "post",
+					        "datatype": "json",
+					        "data":function(data){
+					        	data.type = type;
+					        	data.keyword = keyword;
+					        	data.layer = layer; 
+					        	// console.log(data)
+					        }
+					    },
+					    "columnDefs":[
+					    	{
+                                    "targets": [0], 
+                                    "visible": false
+                            },
+				    		{
+				    			"targets": [4],
+				    			"render":function(data){
+					    			if(data == 1){
+					    				return falling
+					    			}else{
+					    				return "정상"
+					    			}
+					    		}
+				    		},{
+				    			"targets": [5],
+				    			"render":function(data){
+					    			if(data == 1){
+					    				
+					    				return "on"
+					    			}else{
+					    				return noActive					    			
+					    			}
+					    		}	
+				    		},{
+				    			"targets": [6],
+				    			"render":function(data){
+					    			if(data < 16){
+					    				return low_battery
+					    			}else{
+					    				return data		    			
+					    			}
+					    		}	
+				    		}
+					    ],
+					    "columns":[
+							{"data":"welltag_id"},
+							{"data":"type","width":"120px"},
+							{"data":"name","width":"120px"},
+							{"data":"ward","width":"120px"},
+							{"data":"isFalling","width":"120px"},
+							{"data":"isActive","width":"120px"},
+							{"data":"battery","width":"120px"},
+							{"data":"move","width":"120px"},
+							{"defaultContent": "<button id = 'accum_view_btn'>보기</button>","width":"120px"},
+							{"defaultContent": "<button id = 'reset_btn'>초기화</button>","width":"120px"}
+						]
+					})		
+				}
+				function viewAllFallingLogInfo(){
+					$("#wearing_type").find("option:eq(0)").prop("selected", true);
+					table.destroy();
+					table = $("#welltagTable").DataTable({
+			  			"processing": true,
+				        "serverSide": true,
+				        "ordering":false,
+				        "filter": false,
+				        "pageLength": 15,
+				        "bLengthChange": false,
+				        "orderMulti": false,
+					    "ajax": {
+					        "url": '/monitoring/fallingLogInfo',
+					        "type": 'post',
+					        "datatype": "json"
+					    },
+					    "columnDefs":[
+				    		{
+				    			"targets": [4],
+				    			"render":function(data){
+					    			if(data == 1){
+					    				return falling
+					    			}else{
+					    				return "정상"
+					    			}
+					    		}
+				    		},{
+				    			"targets": [5],
+				    			"render":function(data){
+					    			if(data == 1){
+					    				
+					    				return "on"
+					    			}else{
+					    				return noActive					    			
+					    			}
+					    		}	
+				    		},{
+				    			"targets": [6],
+				    			"render":function(data){
+					    			if(data < 16){
+					    				return low_battery
+					    			}else{
+					    				return data		    			
+					    			}
+					    		}	
+				    		}
+					    ],
+					     "columns":[
+							{"data":"welltag_id"},
+							{"data":"type","width":"120px"},
+							{"data":"name","width":"120px"},
+							{"data":"ward","width":"120px"},
+							{"data":"isFalling","width":"120px"},
+							{"data":"isActive","width":"120px"},
+							{"data":"battery","width":"120px"},
+							{"data":"move","width":"120px"},
+							{"defaultContent": "<button id = 'accum_view_btn'>보기</button>","width":"120px"},
+							{"defaultContent": "<button id = 'reset_btn'>초기화</button>","width":"120px"}
+						]
+					})
+					$("#welltagTable").on("click","#reset_btn",function(){
+				        var data = table.row($(this).parents("tr")).data();
+				        var welltag_id = data.welltag_id;
+
+				        data = {"welltag_id":welltag_id};
+
+				        $.ajax({
+				            url:"/monitoring/reset_falling",
+				            data: JSON.stringify(data),
+				            contentType:"application/json",
+				            method:"put",
+				            success:function(data){
+				                layer = $("#select_layer").val();
+				                countState()
+				                updateFallingDisplay(welltag_id,0);
+				                var rowIndex = findRowIndex(welltag_id);
+				                var rowData = table.row(rowIndex).data();
+				                rowData['fallingStr'] = nofalling;
+
+				                table.row(rowIndex).data(rowData).draw(false);
+				            }
+				        })
+				    })
+				}		
+				</script>
+<!-- 				<div style = "float:left;margin-top:20px;margin-right:20px;">
+					<select id="order_select" onChange="change_order()" style="width:100px;border:1px solid gray;border-radius:5px;padding-left:5px;">
+                        <option value="0">이름순</option>
+                        <option value="1">낙상순</option>
+                        <option value="2">신호순</option> 	
+					</select>
+				</div> -->
+                <table id="table_seting">
+                	<tr>
+                		<td><div id='escape_val' onclick="selectEscape()" style='padding: 3px 20px 3px 20px; border-radius: 5px; border: 1px solid black; cursor: pointer; font-weight: 700; '><script>"탈원확인("+escape_count()+")"</script> </div></td>
+                		<td style='visibility: hidden;width: 30px;'>""</td>
+                		<td class="count-form">낙상</td>
+                		<td class="count-form" id="table_count3"><p id="falling_count"></p></td>
+                		<td class="count-form">욕창</td>
+                		<td class="count-form" id="table_count4"><p id="falling_count"></p></td>
+                	</tr>
+                </table>
+			</div>
+	        <script>
+	            function selectEscape(){
+	        		var escape_canvasx = 300;
+	        		var escape_canvasy = 350;
+	            	$("#escape_layer").val(100)
+					escapeImgview(100)
+
+	            	// $(".paginate_button").text("aaa")
+	            	table1.destroy()
+	            	$.ajax({
+				        url:"/monitoring/escape_count",
+				        contentType:"application/json",
+				        method:"get",
+				        success:function(data){
+				            
+				            table1 = $("#escape_table").DataTable({
+				                "processing": true,
+				                "serverSide": true,
+				                "ordering":false,
+				                "filter": false,
+				                "pageLength": 5,
+				                "bLengthChange": false,
+				                "orderMulti": false,
+				                "ajax": {
+				                    "url": "/monitoring/escape",
+				                    "type": 'post',
+				                    "datatype": "json"
+				                },
+				                "columnDefs":[
+				                    {
+				                        "targets": [3],
+				                        "render":function(data){
+				                            if(data == 1){
+				                                
+				                                return "on"
+				                            }else{
+				                                return noActive                                 
+				                            }
+				                        }   
+				                    },
+				                    {
+						            	"targets":[2],
+						            	"render":function(data){
+						            		update_date = new Date(data);
+											var FallingDate_format = moment(update_date).format("YYYY-MM-DD hh:mm:ss");	
+											return FallingDate_format;
+										}
+						            },
+				                    {
+				                        "targets": [4],
+				                        "render":function(data){
+				                            if(data < 16){
+				                                return low_battery
+				                            }else{
+				                                return data                     
+				                            }
+				                        }   
+				                    }
+				                ],
+				                "columns":[
+				                    {"data":"name","width":"70px"},
+				                    {"data":"ward"},
+				                    {"data":"update_date","width":"100px"},
+				                    {"data":"isActive","width":"50px"},
+				                    {"data":"battery","width":"70px"},
+				                    {"defaultContent": "<img src='/static/img/MagnifyingGlass.png' id='escape_view' style='width: 20px; cursor: pointer; border: 1px solid gray; padding: 3px; border-radius: 5px; background-color: #f2f2f2;'>","width":"60px"},
+				                ]
+				            });
+				        }
+				    })
+	            	$("#escape").dialog({
+                        height:"auto",
+                        width:"900px",
+                        modal : true,
+                        buttons: {
+        				}      
+					})
+					$("#escape_layer").change(function(){	
+						var layer = $("#escape_layer").val();
+						$('#escape_canvas').removeLayers().drawLayers();
+						$.ajax({
+					        url:"/monitoring/req_map?layer="+layer,
+					        contentType:"application/json",
+					        method:"get",
+					        success:function(data){
+					            var map = data[0].map
+					            $("#escape_canvas").css({"background-image":"url("+map+")","background-size":"100% 100%"})
+					        }
+					    })
+					})
+					$("#escape_table").on("click","#escape_view",function(){
+						var data = table1.row($(this).parents("tr")).data();
+						// console.log(data)
+						var layer = data.layer;
+						var x = data.loc_x
+						var y = data.loc_y
+						var name = data.user_name
+						var color = null;
+				    	var fillcolor = null;
+
+						var x_value = x *(escape_canvasx/10);
+				        var y_value = escape_canvasy - y * (escape_canvasy/10);
+				        $.ajax({
+							url:"/monitoring/req_map?layer="+layer,
+					        contentType:"application/json",
+					        method:"get",
+					        success:function(data){
+					        	$("#escape_layer").val(layer)
+					        	var map = data[0].map
+					        	$("#escape_canvas").css({"background-image":"url("+map+")","background-size":"100% 100%"})
+					        	$("#escape_canvas").removeLayers().drawLayers(); 
+					   			$("#escape_canvas").drawArc({
+							        layer: true,
+							        fillStyle: "tomato",
+							        strokeWidth: 2,
+							        x: x_value,
+							        y: y_value,
+							        fontSize: '5pt',
+							        radius: 6
+							    });
+							}		
+						})
+					})
+				}
+				function escapeImgview(layer){
+					$.ajax({
+				        url:"/monitoring/req_map?layer="+layer,
+				        contentType:"application/json",
+				        method:"get",
+				        success:function(data){
+				            var map = data[0].map
+				            $("#escape_canvas").css({"background-image":"url("+map+")","background-size":"100% 100%"})
+
+				        }
+				    })
+			    }
+	        </script>
+			<div id="Table" style="clear:both">
+				<table id="welltagTable" style="text-align: center;">
+					<thead>
+						<tr>
+							<th>태그아이디</th>
+							<th onClick="change_order(4)" style="cursor:pointer">착용대상(물)</th>
+							<th onClick="change_order(0)" style="cursor:pointer">이름</th>
+							<th>호실</th>
+							<th onClick="change_order(1)" style="cursor:pointer">상태</th>
+							<th onClick="change_order(2)" style="cursor:pointer">작동</th>
+							<th onClick="change_order(3)" style="cursor:pointer">배터리</th>
+							<th>이동경로</th>
+<!-- 							<th>이동거리(m)</th>
+							<th>누적 이동거리</th> -->
+							<th>초기화</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+	 	<div id='escape' title='탈원 확인' style='display: none'>
+         	<div id='escape_left' style='width: 50%; float: left; height: 409px; border-top: 2px solid black; border-bottom: 2px solid black;'>
+	         	<table id='escape_table' style='width: 100%; text-align: center;'>
+	         		<thead>
+	         			<tr>
+	         				<td>이름</td>
+	         				<td>호실</td>
+	         				<td>마지막 신호</td>
+	         				<td>작동</td>
+	         				<td>배터리</td>
+	         				<td>위치보기</td>
+	         			</tr>
+	         		</thead>
+	         		<tbody></tbody>
+	         	</table>
+         	</div>
+         	<style>
+         		#escape_canvas{
+         			width: 300px;
+    				height: 350px;
+         		}
+         	</style>
+         	<script>
+         		
+         	</script>
+         	<div id='escape_right' style='width: 48%; float: left; margin-left: 10px; text-align: center;'>
+         		<select id="escape_layer" style='width: 100px; height: 31px; border-radius: 5px; margin-bottom: 10px; text-align-last: center;'>
+				</select>
+				<div style='border: 1px solid gray;'>
+					<canvas id="escape_canvas" width="300px" height="350px" style="margin:10px;"></canvas>
+				</div>
+         	</div>
+		</div>
+		<div id = "tracking" title="배회 확인" style="display:none">
+		<div style="overflow:hidden;height:60px;margin-bottom:10px;">
+		<div style='font-weight: 500;float:left'>
+			<p id="trackingWard" class="tt_info"></p>
+			<p id='trackingName' class="tt_info"></p>
+		</div>
+		<script type="text/javascript">
+		$.ajax({
+			url:"/monitoring/selecttrackingdate",
+			method:"get",
+			datatype:"application/json",
+			success:function(data){
+				// console.log(data)
+
+				for(var i = 0 ; i<data.length; i++){
+					var date = data[i].update_date;
+					$("#select_tracking_date").append("<option value="+date+">"+date+"</option>");
+				}	
+				 
+			}
+		})
+		</script>
+		
+		<div style="float:right">
+			<style type="text/css">
+			.tt_info{
+				height:26px;
+				margin-top:4px;
+			}
+			#select_tracking_date{
+				width:110px;
+				height:26px;
+				margin-top:4px;
+			}
+			#tracking_layer{
+				padding-left: 25px;
+				width:110px;
+				height:25px;
+				margin-top:2px;
+				font-size: 16px;
+				font-weight: 700;
+			}
+			#tracking_time_list{
+				font-size: 13px;
+				font-weight: 700;
+			}
+			#tracking_time_list td input{
+				width:80px;
+				height:25px;
+			}
+			.tt_btn{
+				border:1px solid gray;
+				background-color: gray;
+				color:white;
+				cursor:pointer;
+				border-radius: 2px;
+			}
+			#t0{
+				width:40px !important;
+				height:52px !important;
+				margin-top:2px;
+			}
+
+			</style>
+			<table id="tracking_time_list">
+				<tr>
+					<td rowspan=4><input type="button" value="전&#13;체" onClick="trackingTime(0)" id="t0"  class="tt_btn"></td>
+				</tr>
+				<tr>
+					<td><input type="button" value="00시 ~ 03시" onClick="trackingTime(1)" id="t1" class="tt_btn"></td>
+					<td><input type="button" value="03시 ~ 06시" onClick="trackingTime(2)" id="t2" class="tt_btn"></td>
+					<td><input type="button" value="06시 ~ 09시" onClick="trackingTime(3)" id="t3" class="tt_btn"></td>
+					<td><input type="button" value="09시 ~ 12시" onClick="trackingTime(4)" id="t4" class="tt_btn"></td>
+				</tr>
+				<tr>
+					<td><input type="button" value="12시 ~ 15시" onClick="trackingTime(5)" id="t5" class="tt_btn"></td>
+					<td><input type="button" value="15시 ~ 18시" onClick="trackingTime(6)" id="t6" class="tt_btn"></td>
+					<td><input type="button" value="18시 ~ 21시" onClick="trackingTime(7)" id="t7" class="tt_btn"></td>
+					<td><input type="button" value="21시 ~ 24시" onClick="trackingTime(8)" id="t8" class="tt_btn"></td>
+				</tr>
+			</table>
+		</div>
+		<div style="float:right">
+			<select id="select_tracking_date"></select><br>
+			<select id="tracking_layer"></select>
+		</div>
+		</div>
+		<script>
+			function nowYear(){
+			var clock = $("#times")
+			var date = new Date();
+
+			var year = date.getFullYear();
+			// console.log(year)
+			var day = (date.getMonth()+1)+" / "+(date.getDate());
+			// console.log(day)
+
+			clock.html(year+" / "+day+"")
+
+			setTimeout("nowYear()",1000);
+
+			}
+		</script>
+			<canvas id = "tracking_canvas" style=""></canvas><br>
+			<style>
+            #first_color{
+               border: 1px solid #00b050;
+                border-radius: 5px;
+                background-color: #00b050;
+                color: white;
+                text-align: center;
+                width: 23px;
+            }
+            #last_color{
+               border: 1px solid #bfbfbf;
+                border-radius: 5px;
+                background-color: #bfbfbf;
+                color: white;
+                text-align: center;
+                width: 23px;
+            }
+            #escape_color{
+               border: 1px solid #ff6347;
+                border-radius: 5px;
+                background-color: #ff6347;
+                color: white;
+                text-align: center;
+                width: 23px;
+            }
+         </style>
+         <img src="/static/img/layer_map/color.png" style="width:600px;">
+<!--          <table style='margin: 0 auto; font-size: 17px; font-weight: 700;'>
+         	 <tr>
+               <td>첫 신호</td>
+               <td id='first_color'></td>
+               <td style="visibility: hidden;width: 30px;">""</td>
+               <td style="visibility: hidden;width: 30px;">""</td>
+               <td>마지막 신호</td>
+               <td id='last_color'></td>
+               <td style="visibility: hidden;width: 30px;">""</td>
+               <td style="visibility: hidden;width: 30px;">""</td>
+               <td>탈원</td>
+               <td id='escape_color'></td>
+            </tr>
+         </table> -->
+		</div>
+
+<!-- 		<div id="accum_move_form" title="누적 거리" style="display:none">
+			<table id="accum_move_table">
+				<thead>
+					<th>날짜</th>
+					<th>이름</th>
+					<th>누적 이동거리(m)</th>
+				</thead>
+			</table>
+		</div> -->
+	{%endblock%}
+	
+	
+</body>
+</html>

@@ -1,0 +1,117 @@
+#content_area{
+   	width: 700px;
+    margin: 0 auto;
+    margin-top: 50px;
+    height: 790px;
+}
+#content_top{
+	text-align: center;
+	margin-bottom: 10px;
+    font-size: 29px;
+    font-weight: 700;
+}
+#id{
+	margin-top: 10px;
+	
+}
+
+#main{
+	height: 455px;
+    border-bottom: 1px solid gray;
+    border-top: 1px solid gray;
+}
+.TypeName{
+	float:left;
+	font-weight: 700;
+}
+
+.typing{
+	float: left;
+    height: 32px;
+    width: 249px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+.clickbutton{
+	float: left;
+    margin-left: 10;
+    border: 1px solid #dddddd;
+    background-color: #dddddd;
+    border-radius: 5px;
+    width: 85px;
+    text-align: center;
+    height: 28px;
+}
+#password{
+	clear: both;
+}
+#password_Confirm{
+	clear: both;
+}
+#name{
+	clear: both;
+}
+#sex{
+	clear: both;
+}
+#cellphone_selsect{
+	float:left;
+	width: 77px;
+}
+#Confirm_input{
+	margin-left: 37px;
+}
+#id_input{
+	margin-left: 113px;
+	margin-top: 0px;
+}
+#password_input{
+	margin-left: 70px;
+}
+#name_input{
+	margin-left: 100px;
+}
+#man_input{
+	margin-left: 99px;
+	margin-top: 20px;
+}
+#Woman_input{
+	margin-left: 54px;
+}
+#year{
+	margin-left: 71px;
+	margin-top: 20px;
+} 
+#cellphone_selsect{
+	margin-left: 86px;
+
+}
+#certification{
+	margin-left: 130px;
+	margin-top: 0px;
+}
+.hospital_select{
+	margin-left: 101px;
+    margin-top: 27px;
+    height: 32px;
+    width: 110px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+.Confirm{
+	float: left;
+    cursor:pointer;
+    margin-left: 44px;
+    border: 1px solid #dddddd;
+    background-color: #dddddd;
+    border-radius: 5px;
+    width: 85px;
+    text-align: center;
+    height: 28px;
+}
+#success{
+	background-color: #bae5f2;
+}
+

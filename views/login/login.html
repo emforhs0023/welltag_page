@@ -1,0 +1,62 @@
+<html>
+<head>
+	<title>
+		Login
+	</title>
+	
+	<link rel="stylesheet" type="text/css" href="/static/css/login/login.css">
+	<script type="text/javascript" src="/static/js/lib/jquery.min.js"></script>
+  	<script type="text/javascript" src="/static/js/lib/jcanvas.min.js"></script>
+  	<script type="text/javascript" src="/static/js/lib/sugar-1.4.1.min.js"></script>
+</head>
+<body>
+	<div id="header">
+		<div id="logo">
+			<img src="/static/img/logo.png" style="float: left;margin-top: 18px;">
+			<!-- <div style="height: 99px; float: left; margin-top: 72px; margin-left: 10px;">낙상모니터링 시스템</div> -->
+		</div>
+	</div>
+	<div id="content">
+	<div id="content_area">
+			<div style="clear: both;">
+				<img src="/static/img/login_main.png" style="margin: 0 auto; width: 459px; display: block;">
+			</div>
+			
+				<div id="ID_password">
+					<form method="post" action="/login/signin">
+						<div id="ID">
+							<p style=" margin-top: 10px;">아이디</p> 
+							<input type="text"  id="txtId" name="userId" style="margin-top: 3px; padding: 10px 10px;" >
+						</div>
+
+						<div id="password" style="clear: both;">
+							<p style=" margin-top: 10px;">패스워드</p>
+							<input type="password"  id="txtPwd" name="password" style="margin-top: 3px; padding: 10px 10px;">
+						</div>
+
+						<div style="margin: 0 auto; width: 175px;  margin-top: 10px;">
+							 <button  type="submit" id = "login_submit" value="로그인">로그인</button>
+							 <button  type="reset" id = "login_submit" value="취소" style=" padding: 5px 17px;">취소</button>
+						 </div>
+
+						 <div style="margin: 0 auto; width: 176px;  margin-top: 10px;">
+							 <a href="/login/membership"><p style="float:left; font-size: 13px;     margin-top: 3px;">회원 가입</p></a>
+							 <P style="float:left; margin-left: 5px; margin-right: 5px;"> | </P>
+							 <a href="#"><p style="float:left; font-size: 13px;     margin-top: 3px;">ID/PW찾기</p></a>
+						 </div>
+					</form>
+				</div>
+			</div>
+		</div>	
+	
+
+	<div id="footer">
+		
+		<div id="footer">
+			<span>ⓒ 2018 FSRNT Co,Ltd All Rights reserved</span>
+		</div>
+	    
+		
+	</div>
+</body>
+</html>

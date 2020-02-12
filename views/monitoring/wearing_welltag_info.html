@@ -1,0 +1,258 @@
+{%extends "base.html"%}
+
+<html>
+<head>
+	{%block title%}
+        Well-Tag 착용정보
+    {%endblock%}
+    {%block link%}
+    <link rel="stylesheet" type="text/css" href="/static/css/monitoring/wearing_welltag_info.css">
+    <style type="text/css">
+    #add_welltag_button{
+        display: none;
+    }
+    </style>
+    {%endblock%}
+
+    {%block script%}
+    <script type="text/javascript" src="/static/js/Wear_information.js"></script>
+    <script type="text/javascript" src="/static/js/lib/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+    var user_id = "{{user_id}}"
+    console.log(user_id)
+    </script>
+    {%endblock%}
+</head>
+<body>
+	{%block content%}
+		<div style=" width: 100%; height: 100%;">
+			<div id="content_area">
+    			<div>
+                    <input type="hidden" value="1" id="layer">
+    				<select id="All_select" style="float:left;height: 30px;border-radius: 5px 0px 0px 5px;">        
+                        <option value="0">전체</option>
+                        <option value="1">착용대상(물)</option>
+                        <option value="2">이름</option>
+                        <option value="3">호실</option>
+                    </select>
+        	   </div>
+                <div style="height: 30px;">
+                    <input type = "text" id="search_keyword" style="border:1px solid gray; height:30px;margin-right:10px; padding-left:10px;float: left;border-radius: 0px 5px 5px 0px; border-left: none;">
+                    <input type ="button" id ="search_btn" onClick="SearchByName()"/ style="background-image: url(/static/img/MagnifyingGlass.png);width: 18px;height: 18px;background-size: 100% 100%;border: none;color: white;background-color: white; position: relative;right: 35px;top: 5px;">   
+                    <select id = "select_layer">
+                    </select>
+                </div>
+                <style>
+                    #select_layer{
+                        float: right;
+                        width: 153px;
+                        height: 31px;
+                        border: 1px solid gray;
+                        border-radius: 5px;
+                        text-align-last: center;
+                        font-weight: 700;
+                        font-size: 15px;
+                    }
+                </style>
+                <script>
+                    var noActive ="<p style='color:red;'>OFF</p>"   
+                    var falling ="<p style='color:red;'>낙상</p>"
+                    var low_battery = "<p style = 'color:red'>교체 요망</p>"
+
+                    function SearchByName(){
+                        var type = $("#All_select").val();
+                        var layer = $("#select_layer").val();
+                        var keyword = $("#search_keyword").val();
+
+                            table.destroy();
+                            table = $("#welltagTable").DataTable({
+                            "processing": true,
+                            "serverSide": true,
+                            "ordering":false,
+                            "filter": false,
+                            "pageLength": 15,
+                            "bLengthChange": false,
+                            "orderMulti": false,
+                            "ajax": {
+                                "url":"/monitoring/searchFallingLogByName",
+                                "type": "post",
+                                "datatype": "json",
+                                "data":function(data){
+                                    data.type = type;
+                                    data.keyword = keyword;
+                                    data.layer = layer; 
+                                },
+                            },
+                            "columnDefs":[
+                                {
+                                "targets":[6],
+                                    "render":function(data){
+                                        if(data == 1){
+                                            return gender_one;
+                                        }else{
+                                            return gender_zero
+                                        }
+                                    }
+                                },
+                                {
+                                    "targets": [7],
+                                    "render":function(data){
+                                        if(data == 1){
+                                            return falling
+                                        }else{
+                                            return "정상"
+                                        }
+                                    }
+                                },{
+                                    "targets": [8],
+                                    "render":function(data){
+                                        console.log(data)
+                                        if(data == 1){    
+                                            return "ON"
+                                        }else{
+                                            return noActive                                 
+                                        }
+                                    }   
+                                },{
+                                    "targets": [9],
+                                    "render":function(data){
+                                        if(data < 16){
+                                            return low_battery
+                                        }else{
+                                            return data                     
+                                        }
+                                    }   
+                                }
+                            ],
+                            "columns":[
+                                {"data":"welltag_id", "width":"150px"},
+                                {"data":"type", "width":"150px"},
+                                {"data":"name", "width":"200px"},
+                                {"data":"location", "width":"100px"},
+                                {"data":"ward", "width":"100px"},
+                                {"data":"age", "width":"100px"},
+                                {"data":"gender", "width":"100px"},
+                                {"data":"isFalling", "width":"150px"},
+                                {"data":"isActive", "width":"150px"},
+                                {"data":"battery", "width":"150px"},
+                                {"defaultContent": "<button  id='modi_btn' class = 'reset_btn'>수정</button><button id='delete_button' class ='reset_btn'>삭제</button>", "width":"150px"}
+                            ]
+                        })      
+                } 
+                </script>
+                <div id="table_zone">
+                      <table id="welltagTable" style="text-align: center;">
+                        <thead>
+                            <tr id="TableTitle">
+                                <th>윌태그 ID</th>
+                                <th onClick="selectOrder(4)" style="cursor:pointer">윌태그 착용대상(물)</th>
+                                <th onClick="selectOrder(0)" style="cursor:pointer">이름</th>
+                                <th>장소</th>
+                                <th>병실</th>
+                                <th>나이</th>
+                                <th>성별</th>
+                                <th onClick="selectOrder(1)" style="cursor:pointer">낙상</th>
+                                <th onClick="selectOrder(2)" style="cursor:pointer">신호</th>
+                                <th onClick="selectOrder(3)" style="cursor:pointer">배터리</th>     
+                                <th>편집</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div id="add_btn"onClick="addWearingWelltagInfo()" style="margin-bottom:10px;">추가</div>
+                </div>
+			</div>
+		</div>
+        <div id="dialog-confirm" title="착용 대상 추가" style="display:none">
+            <div>
+                <p>웰태그 아이디</p>
+                <select id = "not_use_welltag">                    
+                </select>
+            </div>
+            <div>
+                <p>웰태그 착용대상</p>
+                <select id = "type" onChange="viewText(this.value)">
+                    <option value ="선택">선택</option>
+                    <option value ="환자">환자</option>
+                    <option value ="의료인">의료인</option>
+                    <option value ="의료기구">의료기구</option>
+                </select>
+            </div>
+            <div id="new_user_name"  style="display:none">
+                <p>이름</p>
+                <input type="text" id = "name">
+            </div>
+            <div id="new_ward" style="display:none">
+                <p>병실</p>
+                <input type="text" id="ward">
+            </div>
+            <div id="new_age" style='display: none'>
+                <p>나이</p>
+                <input type="text" id="age">
+            </div>
+            <div id="new_sex" style='display: none'>
+                <p>성별</p>
+                <input type="radio" name="gender" value="0">남자 
+                <input type="radio" name="gender" value="1">여자
+            </div>
+            <div id="new_etc" style='display: none'>
+                <p>특이사항</p>
+                <input type="text" id="etc">
+            </div>
+            <div id="new_patient_number" style='display: none'>
+                <p>환자번호</p>
+                <input type="text" id="patient_number">
+            </div>
+        </div>
+        <div id="dialog-confirm1" title="착용 대상 수정" style="display:none">
+            <input type="hidden" id="backup_welltag_seq">
+            <input type="hidden" id="backup_type">
+            <div>
+                <p>윌태그ID</p>
+                <input type="hidden" id="modi_welltag_seq">
+                <P id="modi_welltag" value=""></P>
+            </div>
+            <div>
+                <p>변경 윌태그ID</p>
+                <select id="change_modi_welltag">
+                    <option value="0" id='zero'>-변경없음-</option>
+                </select>
+            </div>
+            <div>
+            <div>
+                <p>나이</p>
+                <input type="text" id="modi_age">
+            </div>
+            <div>
+                <p>성별</p>
+                <input type="radio" name="modi_gender" class='radiobox' value="0">남자 
+                <input type="radio" name="modi_gender" class='radiobox' value="1">여자
+            </div>
+            </div>
+            <div>
+                <p>윌태그 착용대상</p>
+                <select id="modi_type" onChange="wardText(this.value)">
+                    <option value ="선택">선택</option>
+                    <option value ="환자">환자</option>
+                    <option value ="의료인">의료인</option>
+                    <option value ="의료기구">의료기구</option>
+                </select>
+            </div>
+
+            <div id="new_modi_name">
+                <p>이름</p>
+                <input type="text" id ="modi_name">
+            </div>
+
+            <div id="new_modi_ward">
+                <p>병실</p>
+                <input type="text" id ="modi_ward">
+            </div>        
+        </div>  
+        <div id="delete_approve" title="삭제확인" style="display:none">
+            <p>삭제 하시겠습니까?</p>
+        </div>
+	{%endblock%}
+
+    
+</body>
+</html>

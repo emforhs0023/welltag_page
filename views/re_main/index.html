@@ -1,0 +1,917 @@
+{%extends "re_base.html"%}
+<!-- 타이틀 -->
+{%block title%}EMR{%endblock%}
+<!-- 스타일 -->
+{%block link%}
+{%endblock%}
+<!-- 자바스크립트 -->
+{%block script%}
+	<script type="text/javascript" src="socket.io/socket.io.js"></script>
+{%endblock%}	
+<!-- 헤더 추가 -->
+{%block header%}{%endblock%}
+<!-- 내용 -->
+{%block content%}
+<style type="text/css">
+#monitoring_tab_btn, #admin_tab_btn{
+	float:left;
+	width:100px;
+	height:30px;
+	text-align: center;
+	line-height: 30px;
+	background-color: #BDBDBD;
+	border-radius: 10px 10px 0 0;
+	color:white;
+}
+#monitoring_tab_btn{
+	background-color: #5B9BD5;
+}
+#layer_info{
+	float:right;
+	width:100px;
+}
+#top_left{height:380px;width:380px;float:left;}
+#top_center{height:400px;width:700px;float:left;margin-left:10px;}
+#top_right{height:400px;width:654px;float:right;}
+#bottom_left{height:420px;width:1110px;float:left;}
+#bottom_right{height:420px;width:654px;float:right;}
+.content_div{
+	border:1px solid #BDBDBD;
+}
+</style>
+<script type="text/javascript">
+
+	var isfalling = "<p style='color:tomato;font-weight:700'>낙상</p>"
+	var decubitus = "<p style='color:#3fbd3f;font-weight:700'>욕창</p>"
+	var nofalling = "<p>정상</p>"
+	var active_on  = "<p>ON</p>"
+	var active_off  = "<p style='color:red'>OFF</p>"
+	var low_battery = "<p style = 'color:red'>교체 요망</p>"
+
+	var table = null;
+
+	var from_layer = 1;
+	var to_layer = 1;
+
+	var welltag_loc = {};
+
+
+	function getXAxisValue(xValue) {
+	 	canvasx = 700;
+	    return xValue * (canvasx/10);
+	}
+
+	function getYAxisValue(yValue) {
+	    canvasy = 400;
+	    return canvasy - yValue * (canvasy/10);
+	}
+	$(function(){		
+
+		layer_type = location.href.split("=")[1];
+		
+		var socket = io();
+		
+		socket.on("location", function(data){
+			// var layerState = $("#select_layer").val()
+	        // welltag_id
+	        var tagId = data["welltag_id"];
+	        // X 좌표
+	        var xValue = getXAxisValue(data["x"]);
+	        // Y 좌표
+	        var yValue = getYAxisValue(data["y"]);
+	        // 상태
+	        var fail_down = data["fail_down"];
+
+	        // console.log(tagId)
+	        // console.log(tagId)
+	        // console.log(tagId)
+	        // console.log(tagId)
+
+	        // 사용자 이름
+	        // var name = data["name"];
+	        // console.log("good")
+		})
+		$.ajax({
+			method:"get",
+			contentType:"application/json",
+			url:"/re_main/layer",
+			success:function(data){
+				for(var i=0; i<data.length; i++){
+					$("#layer_info").append("<option value="+data[i].layer+">"+data[i].location+"</option>")
+				}
+				if(layer_type == undefined){
+	                layer = 3;
+	            }else{
+	                layer = layer_type;
+	            }
+	            
+	            $("#layer_info").val(layer);
+
+
+	            // 최초 층 변경 정보를 전달함.(필수)
+                socket.emit('move_layer', {'from': from_layer, 'to': layer})
+                to_layer = layer;
+                from_layer = layer;
+
+				imgView();
+				noWearPatient();
+				wearPatient();
+				fallingStateMap();
+			}
+		})
+
+		$("#layer_info").change(function(){	
+			var layer = $("#layer_info").val();
+			// socket.emit('move_layer', {'from': from_layer, 'to': layer})
+			location.href = "/re_main?layer=" + layer;
+		})
+		
+		$("#no_wear_welltag_patient_info_list").on("click","tr",function(){
+
+			$.ajax({
+				url:"/re_main/availablewelltag",
+				contentType:"application/json",
+				method:"get",
+				success:function(data){
+					var TableList = data;
+
+					table3 = $("#availablewelltag").DataTable({
+				        "destroy":true,
+				        "ordering":false,
+				        "searching": false,
+				        "info": false,
+				        "scrollY": "101px",
+				        "scrollCollapse": true,
+				        "bLengthChange": false,
+				        "data": TableList,
+				        "paging": false,
+				        "columns":[
+				            {"data":"welltag_id"},
+				        ]
+				    });
+				}
+			})
+
+			var data = table1.row($(this)).data();
+			console.log(data)
+			$("#no_wear_welltag_patient_info_list tr").css({"background-color":"white"})
+			$("#wear_welltag_patient_info_list tr").css({"background-color":"white"})
+
+			var thisRow = $(this);
+			$(this).css({"background-color":"#D8D8D8"});
+
+			$("#modi_patient_btn").css({"display":"inline"})
+			$("#regi_patient_btn").css({"display":"none"})
+
+			$("#patient_seq").val(data.seq)
+			$("#patient_name").val(data.name);
+			$("#patient_age").val(data.age);
+			var gender = data.gender;
+			if(gender == 0){
+				$('input:radio[name="gender"][value="0"]').prop('checked', true)
+			} else if(gender == 1){
+				$('input:radio[name="gender"][value="1"]').prop('checked', true)
+			}
+			// var patient_layer = $("#layer_info").val();
+			$("#phone_number").val(data.phone_number);
+			$("#patient_number").val(data.patient_number);
+			$("#ward").val(data.ward);
+			$("#etc").val(data.etc);
+			console.log(data.welltag_id)
+			//미착용자
+			if(data.welltag_id == undefined){
+				$("#use_welltag").html("")
+			}
+			$("#no").val(data.seq);
+		
+
+		})
+		$("#wear_welltag_patient_info_list").on("click","tr",function(){
+
+			$.ajax({
+				url:"/re_main/availablewelltag",
+				contentType:"application/json",
+				method:"get",
+				success:function(data){
+					var TableList = data;
+
+					table3 = $("#availablewelltag").DataTable({
+				        "destroy":true,
+				        "ordering":false,
+				        "searching": false,
+				        "info": false,
+				        "scrollY": "101px",
+				        "scrollCollapse": true,
+				        "bLengthChange": false,
+				        "data": TableList,
+				        "paging": false,
+				        "columns":[
+				            {"data":"welltag_id"},
+				        ]
+				    });
+				}
+			})
+
+			var data = table.row($(this)).data();
+			$("#wear_welltag_patient_info_list tr").css({"background-color":"white"})
+			$("#no_wear_welltag_patient_info_list tr").css({"background-color":"white"})
+
+			var thisRow = $(this);
+			$(this).css({"background-color":"#D8D8D8"});
+
+			$("#patient_seq").val(data.seq)
+			$("#patient_name").val(data.name);
+			$("#patient_age").val(data.age);
+			var gender = data.gender;
+			if(gender == 0){
+				$('input:radio[name="gender"][value="0"]').prop('checked', true)
+			} else if(gender == 1){
+				$('input:radio[name="gender"][value="1"]').prop('checked', true)
+			}
+			// var patient_layer = $("#layer_info").val();
+			$("#phone_number").val(data.phone_number);
+			$("#patient_number").val(data.patient_number);
+			$("#ward").val(data.ward);
+			$("#etc").val(data.etc);
+
+			$("#no").val(data.seq);
+
+			$("#use_welltag").html(data.welltag_id)
+		})
+
+		
+		$("#availablewelltag").on("click","tr",function(){
+			var data = table3.row($(this)).data();
+			console.log(data)
+			// var data = table.row($(this)).
+			$("#availablewelltag tr").css({"background-color":"white"})
+			$(this).css({"background-color":"#D8D8D8"});
+
+			$("#select_welltag_seq").val(data.welltag_seq)
+		})		
+	})
+
+	function fallingStateMap(){
+		var layer = $("#layer_info").val();
+		// console.log(layer);
+		$.ajax({
+			url:"/re_main/map_img?layer="+layer,
+			method:"get",
+			contentType:"application/json",
+			success:function(data){		
+				var map = data[0].map;
+   				$("#canvas2").css({"background-image":"url("+map+")","background-size":"100% 100%"})
+			}
+		})	
+	}
+	function noWearPatient(){
+		var layer = $("#layer_info").val();
+
+		$.ajax({
+			method:"get",
+			contentType:"application/json",
+			url:"/re_main/nowearpatientinfo?layer="+layer,
+			success:function(data){
+				initNoWearPatientDataTable(data);
+			}
+		})
+	}
+	function wearPatient(){
+		var layer = $("#layer_info").val();
+
+		$.ajax({
+			method:"get",
+			contentType:"application/json",
+			url:"/re_main/wearpatientinfo?layer="+layer,
+			success:function(data){
+				//초기 위치 출력
+				initWelltagLocation(data)
+				initWearPatientDataTable(data);
+			}
+		})
+	}
+	function initWelltagLocation(data){
+		canvasx = 700;
+		canvasy = 400;
+
+// console.log(data)
+		for(var i = 0; i<data.length; i++){
+			var x = data[i].loc_x;
+			var y = data[i].loc_y;
+			var falling_state = data[i].isFalling;	
+			var tagId = data[i].welltag_id;
+			//1이면 낙상, 3이면 욕창
+			// console.log(x)
+			// console.log(y)
+			// console.log(falling_state)
+
+			var x_value = x *(canvasx/10);
+            var y_value = canvasy - y * (canvasy/10);
+
+            var color = null;
+		    var fillcolor = null;
+
+		    if(falling_state == 1){
+		        color = "tomato";
+		    } else if(falling_state == 3){
+		        color = "#4374D9"
+		    // }else if(isActive == false) {
+		    //     color = "#BDBDBD";
+		    } else {
+		        color = "black";
+		    }
+
+		    $("#canvas").drawArc({
+		        layer: true,
+		        name: tagId,
+		        fillStyle: color,
+		        radius: 5,
+		        x: x_value,
+		        y: y_value,
+			});
+		}
+
+	}
+	function initWearPatientDataTable(data){
+		var TableList = data;
+
+		table = $("#wear_welltag_patient_info_list").DataTable({
+	        "destroy":true,
+	        "ordering":false,
+	        "searching": false,
+	        "info": false,
+	        "scrollY": "335px",
+	        "scrollCollapse": true,
+	        "bLengthChange": false,
+	        "data": TableList,
+	        "paging": false,
+	        "columns":[
+	            {"data":"seq"},
+	            {"data":"name"},
+	            {"data":"patient_number"},
+	            {"data":"ward"},
+	            {"data":"isFalling"},
+	            {"data":"battery"},
+	            {"data":"isActive"},
+	            {"data":"move"},
+	            {"defaultContent": "<button id = 'reset_btn' style='width:100%;border:0;height:100%;'>초기화</button>"}
+	        ]
+	    });
+	}
+	function initNoWearPatientDataTable(data){
+		var TableList = data;
+
+		table1 = $("#no_wear_welltag_patient_info_list").DataTable({
+	        "destroy":true,
+	        "ordering":false,
+	        "searching": false,
+	        "info": false,
+	        "scrollY": "335px",
+	        "scrollCollapse": true,
+	        "bLengthChange": false,
+	        "data": TableList,
+	        "paging": false,
+	        "columns":[
+	            {"data":"seq"},
+	            {"data":"name"},
+	            {"data":"patient_number"},
+	            {"data":"ward"}
+	        ]
+	    });
+	}
+
+	function imgView(){
+		var layer = $("#layer_info").val();
+		// console.log(layer);
+		$.ajax({
+			url:"/re_main/map_img?layer="+layer,
+			method:"get",
+			contentType:"application/json",
+			success:function(data){		
+				var map = data[0].map;
+   				$("#canvas").css({"background-image":"url("+map+")","background-size":"100% 100%"})
+			}
+		})	
+	}
+</script>
+<a href="/re_main/"><div id="monitoring_tab_btn">모니터링</div></a>
+<a href="/re_system/"><div id="admin_tab_btn">관리</div></a>
+<select id="layer_info"></select>
+<div class="clear" style="clear:both"> </div>
+<style type="text/css">
+	#top_left{
+		padding:10px;
+	}
+	#top_left p{
+		text-align:center;
+		margin-bottom:20px;
+	}
+	#top_left .input_title{
+		float: left;
+		width:80px;
+		text-align: center;
+		height:20px;
+		margin:5px 0;
+	}
+	#top_left .input_txt{
+		height:20px;
+		width:247px;
+		margin:5px 0;
+	}
+	#top_left textarea{
+		margin-top:5px;
+	}
+	#del_patient_btn, #modi_patient_btn, #regi_patient_btn, #reset_input_btn{
+		width:100px;height:30px;
+	}
+</style>
+<div id="monitoring" style="border:1px solid #BDBDBD">
+	<div style="margin:10px;">
+		<div id="top_left" class="content_div">
+			<p style="text-align:center;">환자 등록 / 관리</p>
+			<input type = "hidden" id="patient_seq">
+			<div class="input_title">이름</div><input type="text" class="input_txt" id="patient_name" /><br>
+			<div class="input_title">나이</div><input type="text" class="input_txt" id="patient_age"/><br>
+			<div class="input_title">성별</div>
+			<div style="width:100px;float:left;margin:5px 0"> 
+				<label for="male">
+					<input type="radio" id="male" value="0" name="gender"/>&nbsp;&nbsp;남자
+				</label>
+			</div>
+			<div style="width:100px;float:left;margin:5px 0"> 
+				<label  for="female">
+					<input type="radio" id="female" value="1" name="gender"/>&nbsp;&nbsp;여자
+				</label>
+			</div>
+			<div class="clear" style="clear:both"> </div>
+			<div class="input_title">환자 번호</div><input type="text" class="input_txt" id="patient_number"/><br>
+			<div class="input_title">연락처</div><input type="text" class="input_txt" id="phone_number"/><br>
+			<div class="input_title">병실</div><input type="text" class="input_txt" id="ward"/><br>
+			<div class="input_title">특이사항</div><textarea cols="33" rows="4" id="etc"></textarea>
+			<div style="width:320px;margin:0 auto;margin-top:10px;">
+				<input type="button" value="수정" id = "modi_patient_btn" onClick="modiPatient()" style="display:none">
+				<input type="button" value="저장" id = "regi_patient_btn" onClick="regiPatient()">
+				<input type="button" value="취소" id = "reset_input_btn" onClick="resetPatient()">
+				<input type="button" value="삭제" id = "del_patient_btn" onClick="delPatient()">
+			</div>
+			<script type="text/javascript">
+			function resetPatient(){
+				// var seq = $("#patient_seq").val("");
+				// var name = $("#patient_name").val("");
+				// var age = $("#patient_age").val("");
+				// var gender = $(":input:radio[name=gender]:checked").removeAttr('checked');
+				// var patient_layer = $("#layer_info").val("");
+				// var phone_number = $("#phone_number").val("");
+				// var patient_number = $("#patient_number").val("");
+				// var ward = $("#ward").val("");
+				// var etc = $("#etc").val("");
+
+				// $("#modi_patient_btn").css({"display":"none"})
+				// $("#regi_patient_btn").css({"display":"inline"})
+				var layer = $("#layer_info").val();
+				location.href = "/re_main?layer=" + layer;	
+			}
+			function delPatient(){
+				var use_welltag = $("#use_welltag").html()
+				if(use_welltag == ""){
+					var seq = $("#patient_seq").val()
+					$.ajax({
+						url:"/re_main/delpatient?seq=" + seq,
+						method:"get",
+						contentType:"application/json",
+						success:function(data){
+							if(data == true){
+	                			alert("환자가 삭제되었습니다.")
+		                		var layer = $("#layer_info").val();
+								location.href = "/re_main?layer=" + layer;	
+	                		}else{
+	                			alert("환자 삭제 실패")
+	                		}
+						}
+					})
+				}else{
+					alert("먼저 웰태그를 해제해주세요.")
+				}
+			}
+			function modiPatient(){
+				var seq = $("#patient_seq").val();
+				var name = $("#patient_name").val();
+				var age = $("#patient_age").val();
+				var gender = $(":input:radio[name=gender]:checked").val();
+				var patient_layer = $("#layer_info").val();
+				var phone_number = $("#phone_number").val();
+				var patient_number = $("#patient_number").val();
+				var ward = $("#ward").val();
+				var etc = $("#etc").val();
+
+				data = {"seq":seq, "name":name,"age":age,"gender":gender,"patient_number":patient_number,"phone_number":phone_number,"ward":ward,"etc":etc,"patient_layer":patient_layer};
+
+				$.ajax({
+	                url:"/re_main/modipatient",
+	                contentType:"application/json",
+	                method:"post",
+                	data:JSON.stringify(data),
+                	success:function(data){
+                		if(data == true){
+                			alert("환자가 수정되었습니다.")
+	                		var layer = $("#layer_info").val();
+							location.href = "/re_main?layer=" + layer;	
+                		}else{
+                			alert("환자 수정 실패")
+                		}	
+                	}
+                })
+			}
+			function regiPatient(){
+				var name = $("#patient_name").val();
+				var age = $("#patient_age").val();
+				var gender = $(":input:radio[name=gender]:checked").val();
+				var patient_layer = $("#layer_info").val();
+				var phone_number = $("#phone_number").val();
+				var patient_number = $("#patient_number").val();
+				var ward = $("#ward").val();
+				var etc = $("#etc").val();
+
+				data = {"name":name,"age":age,"gender":gender,"patient_number":patient_number,"phone_number":phone_number,"ward":ward,"etc":etc,"patient_layer":patient_layer};
+
+           		$.ajax({
+	                url:"/re_main/regipatient",
+	                contentType:"application/json",
+	                method:"post",
+                	data:JSON.stringify(data),
+                	success:function(data){
+                		if(data == true){
+                			alert("환자가 추가되었습니다.")
+	                		var layer = $("#layer_info").val();
+							location.href = "/re_main?layer=" + layer;	
+                		}else{
+                			alert("환자 등록 실패")
+                		}
+                		
+                	}
+                })
+				
+			}
+			</script>
+		</div>
+		<div id="top_center" class="content_div">
+			<canvas width="700px" height="400px" id="canvas"></canvas>
+		</div>
+		<div id="top_right" class="content_div">
+			<style type="text/css">
+			#graph_title{
+				height:40px;
+				line-height: 40px;
+				text-align: center;
+				background-image: linear-gradient(white, #D8D8D8);
+				font-size: 14px;
+				font-weight: 500;
+			}
+			.graph_btn{
+				width:100px;
+				height:30px;
+				font-size: 13px;
+				font-weight: 500;
+			}
+			#top_right select{
+				height:30px;
+			}
+			#top_right .graph_date{
+				height:26px;
+			}
+			</style>
+			<p id="graph_title">운동량</p>
+			<div style="padding:10px;">
+				<input type="button" value="주간" class="graph_btn">
+				<input type="button" value="월간" class="graph_btn">
+				<select>
+					<option value="0">그래프 선택</option>
+					<option value="1">막대 그래프</option>
+					<option value="2">꺽은선 그래프</option>
+				</select>
+				<input type="date" class="graph_date"> ~ 
+				<input type="date" class="graph_date">
+			</div>
+			<style type="text/css">
+			body{
+			font:12px Arial;
+			}
+
+			.line {
+			  fill: none;
+			  stroke: steelblue;
+			  stroke-width: 2px;
+			}
+			</style>
+			<script type="text/javascript">
+			// $(function(){
+			// 	var csvfile = '/data/data.csv';
+			// 	var gr_w = 634;
+			// 	var gr_h = 280;
+			// 	var margin = {top: 20, right: 20, bottom: 20, left: 20};
+
+			// 	var parseTime = d3.timeParse("%d-%b-%y");
+
+			// 	var svg = d3.select("#graph")
+			// 	.append("svg")
+			// 	.attr("width", gr_w + margin.left + margin.right)
+			// 	.attr("height", gr_h + margin.top + margin.bottom)
+
+			// 	var valueline = d3.line()
+			//     .x(function(d) { return x(d.ndate); })
+			//     .y(function(d) { return y(d.result); });
+
+			//     svg.append("g")
+			// 	.attr("id","x_axis")
+			// 	.attr("transform", "translate(0, 280)");
+
+			// 	var x = xscale = d3.scaleTime().range([0 ,gr_w ]);
+			// 	var y = yscale = d3.scaleLinear().range([gr_h, 0]);
+
+			// 	d3.csv(csvfile, function(error, data){
+
+			// 		data.forEach(function(d) {
+			// 			var setDate = d.date;
+			// 			var year = setDate.substr(0,4);
+			// 			var month = setDate.substr(4,2);
+			// 			var day = setDate.substr(6,2);
+			// 			var hour = setDate.substr(8,2);
+			// 			var minute = setDate.substr(10,2);
+			// 			var seconds = setDate.substr(12,2);
+			// 	      	var date = new Date(year, month-1, day, hour, minute, seconds) 
+			// 	      	d.ndate = date;
+			// 	   		d.result = +d.result;
+			// 		});
+
+			// 		var mindate = new Date(2017,9,14,14,53);
+		 //            	maxdate = new Date(2017,9,16,14,53,59);
+
+			// 		x.domain([mindate, maxdate])
+			// 		y.domain([0,7])
+
+			// 		svg.append("path")
+			// 	      .data([data])
+			// 	      .attr("class", "line")
+			// 	      .attr("d", valueline);
+			   		
+			//    		d3.select('#x_axis')
+			// 		.call(d3.axisBottom(xscale));
+
+
+			// 		d3.select('#y_axis')
+			// 		.call(d3.axisLeft(yscale)); 
+			// 	})
+			// })
+			</script>
+			<div id="graph" style="padding:10px;"></div>
+		</div>
+		<div class="clear" style="clear:both"></div>
+	</div>
+	<div style="margin:10px;">
+		<style type="text/css">
+		#wear_welltag{
+			border:1px solid #BDBDBD;
+		}
+		.wear_welltag_main_title{
+			padding-left:10px;
+			height:40px;
+			line-height: 40px;
+			font-size: 15px;
+			font-weight: 500;
+			background-image: linear-gradient(white, #D8D8D8);
+		}
+		.wear_welltag_title{
+			text-align: center;
+			height:31px;
+			line-height: 31px;
+			font-size: 13px;
+			font-weight: 500;
+			background-image: linear-gradient(white, #D8D8D8);
+		}
+		#bottom_left table{
+			border-collapse: collapse;
+		}
+		#bottom_left table td{
+			border:1px solid #BDBDBD;
+		}
+		#bottom_left table thead td{
+			height:30px;
+			font-size: 13px;
+			font-weight: 500;
+			background-image: linear-gradient(white, #D8D8D8);
+			text-align: center;
+			border-bottom:0px;
+		}
+		#wear_welltag_patient_info tbody td, #no_wear_welltag_patient_info_list tbody td{
+			font-size: 13px;
+			height: 33px;
+			font-weight: 500;
+			text-align: center;
+		}
+		.welltag_admin_top{
+			height:30px;
+			font-size: 13px;
+			font-weight: 500;
+			background-image: linear-gradient(white, #D8D8D8);
+			text-align: center;
+			border-bottom:0px;
+		}
+		#use_welltag{
+			height:24px;
+		}
+		#availablewelltag tbody td{
+			font-size: 13px;
+			height:24px;
+		}
+		</style>
+		<div id="bottom_left" class="content_div" >
+			<div class="wear_welltag_main_title">환자상태</div>
+			<div style="padding:5px;">
+				<div id="wear_welltag" style="width:190px;height:365px;float:left;">
+					<p class="wear_welltag_title">Welltag-Tag 관리</p>
+					<div style="padding:5px">
+						<style type="text/css">
+							.no{
+								width:40px;
+								text-align: center;
+								/*margin:10px 0;*/
+							}
+						</style>
+						<div style="width:80px; margin:10px auto;">
+							<span class="no">번호</span>
+							<input type="text" id = "no" class="no">
+						</div>
+						<div style="width:150px; margin:10px auto;">
+							<table style="width:150px;text-align:center;">
+								<tr>
+									<td class="welltag_admin_top">사용자 웰태그</td>
+								</tr>
+								<tr>
+									<td id="use_welltag"></td>
+								</tr>
+							</table>
+						</div>
+						<div style="width:150px; margin:10px auto;">
+							<script type="text/javascript">
+							$(function(){
+							})
+							</script>
+							<table style="width:150px;text-align:center;" id="availablewelltag">
+								<thead>
+									<tr>
+										<td class="welltag_admin_top">사용 가능한 웰태그</td>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+							<input type="hidden" id="select_welltag_seq">
+						</div>
+					</div>
+
+					<style type="text/css">
+					.welltag_admin_btn{;
+						width:55px;
+						float: left;
+						margin:5px 2px;
+						height:30px;
+						text-align: center;
+						line-height: 30px;
+					}
+					</style>
+					<div style="padding:5px">
+						<script type="text/javascript">
+
+						function wearInfo(){
+							var no = $("#no").val();
+							var use_welltag = $("#use_welltag").html();
+							var select_welltag_seq = $("#select_welltag_seq").val();
+							if(use_welltag == ""){
+
+								data = {"no":no, "select_welltag_seq" : select_welltag_seq};
+
+				           		$.ajax({
+					                url:"/re_main/regiwearinfo",
+					                contentType:"application/json",
+					                method:"post",
+				                	data:JSON.stringify(data),
+				                	success:function(data){
+				                		if(data == true){
+				                			alert("착용정보를 추가했습니다.")
+					                		var layer = $("#layer_info").val();
+											location.href = "/re_main?layer=" + layer;	
+				                		}else{
+				                			alert("착용정보 추가 실패")
+				                			var layer = $("#layer_inf0o").val();
+											location.href = "/re_main?layer=" + layer;	
+				                		}
+				                		
+				                	}
+				                })
+							}else{
+								// alert("수정")
+								data = {"no":no, "use_welltag":use_welltag, "select_welltag_seq" : select_welltag_seq};
+
+				           		$.ajax({
+					                url:"/re_main/modiwearinfo",
+					                contentType:"application/json",
+					                method:"post",
+				                	data:JSON.stringify(data),
+				                	success:function(data){
+				                		if(data == true){
+				                			alert("착용정보를 수정했습니다.")
+					                		var layer = $("#layer_info").val();
+											location.href = "/re_main?layer=" + layer;	
+				                		}else{
+				                			alert("착용정보 수정 실패")
+				                			var layer = $("#layer_inf0o").val();
+											location.href = "/re_main?layer=" + layer;	
+				                		}
+				                		
+				                	}
+				                })
+							}	
+						}
+						function delWearInfo(){
+							var no = $("#no").val()
+							var use_welltag = $("#use_welltag").html();
+
+							data = { "no":no, "use_welltag":use_welltag }
+							$.ajax({
+								url:"/re_main/delwearinfo",
+								contentType:"application/json",
+				                method:"post",
+			                	data:JSON.stringify(data),
+			                	success:function(data){
+			                		if(data == true){
+			                			alert("웰태그 착용을 해제했습니다.")
+				                		var layer = $("#layer_info").val();
+										location.href = "/re_main?layer=" + layer;	
+			                		}else{
+			                			alert("웰태그 제거 실패")
+			                			var layer = $("#layer_inf0o").val();
+										location.href = "/re_main?layer=" + layer;	
+			                		}
+			                	}
+							})
+						}				
+						function resetWelltag(){
+							var layer = $("#layer_info").val();
+							location.href = "/re_main?layer=" + layer;	
+						}
+
+						</script>
+						<input type="button" class="welltag_admin_btn" onClick="wearInfo()" value="확인">
+						<input type="button" class="welltag_admin_btn" onClick="resetWelltag()" value="취소">
+						<input type="button" class="welltag_admin_btn" onClick="delWearInfo()" value="해제">
+					</div>
+				</div>
+
+				<div id="no_wear_welltag_patient_info" style="width:318px;height:340px;float:left;margin-left:5px;">
+					<table id = "no_wear_welltag_patient_info_list" width="100%">
+						<thead >
+							<td>번호</td>
+							<td>이름</td>
+							<td>환자번호</td>
+							<td>호실</td>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+				<div id="wear_welltag_patient_info" style="width:580px;height:340px;float:right;">
+	<!-- 				<p>Welltag 착용 환자 리스트</p> -->
+					<table id = "wear_welltag_patient_info_list" width="100%">
+						<thead>
+							<td>번호</td>
+							<td>이름</td>
+							<td>환자번호</td>
+							<td>호실</td>
+							<td>상태</td>
+							<td>배터리</td>
+							<td>작동</td>
+							<td>운동량</td>
+							<td>초기화</td>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<style type="text/css">
+		.falling_history_title{
+			padding-left:10px;
+			height:40px;
+			line-height: 40px;
+			font-size: 15px;
+			font-weight: 500;
+			background-image: linear-gradient(white, #D8D8D8);
+		}
+		</style>
+		<div id="bottom_right" class="content_div">
+			<div class="falling_history_title">상태히스토리</div>
+			<canvas id="canvas2" height="380px" width="654px"></canvas>
+		</div>
+		<div class="clear" style="clear:both"></div>
+	</div>
+</div>
+{%endblock%}
+<!Doctype html>

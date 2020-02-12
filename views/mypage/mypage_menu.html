@@ -1,0 +1,53 @@
+{%extends "base.html"%}
+
+<html>
+<head>
+	{%block title%}
+		마이페이지
+	{%endblock%}
+
+	{%block link%}
+	<link rel="stylesheet" type="text/css" href="/static/css/mypage/mypage_menu.css">
+	{%endblock%}
+
+	{%block script%}
+	
+  	{%endblock%}
+</head>
+<body>
+	{%block content%}
+	<div id="content_area">
+ 		<div>
+ 			<p id="content_top">마이페이지</p>
+ 		</div>
+ 		<div id="main">
+ 			<div id="main_area">
+	 			<div id="privacy_img">
+					<a href="/mypage/mypageprivacy">
+						<img src="/static/img/privacy.jpg" >
+					</a>
+				</div>
+	 			
+	 			<div id="password_img">
+					<a href="/mypage/changepassword">
+						<img src="/static/img/password.jpg">
+					</a>
+				</div>
+
+				<div id="withdrawal_img">
+					<a href="/mypage/withdrawal">
+						<img src="/static/img/withdrawal.jpg">
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>	
+	{%endblock%}
+
+	{%block footer%}
+	<div id="footer"style="background-color: #b1dbe7;
+    "></div>
+    <p>ⓒ 2017 FSRNT Ce,Ltd All Rights reserved</p>
+    {%endblock%}
+</body>
+</html>

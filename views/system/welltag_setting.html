@@ -1,0 +1,95 @@
+{%extends "system_base.html"%}
+
+<html>
+<head>
+	{%block title%}
+		Well-Tag 관리
+	{%endblock%}
+
+	{%block link%}
+	<link rel="stylesheet" type="text/css" href="/static/css/system/welltag_setting.css">
+
+	{%endblock%}
+
+  	{%block script%}
+  	<script type="text/javascript" src="/static/js/WelltagAdmin.js"></script>
+
+  	{%endblock%}
+
+
+</head>
+<body>
+	{%block content%}
+	<!-- <div id="content_area">
+			<div style="margin: 0 auto;width: 1003px;">
+	 			<div id="menu_well_tag">
+	 				<a href="/system/welltag_setting" class="main_tag_a"><p class="title" id="menu_well_tag_title">Well-Tag 관리</p></a>
+	 			</div>
+
+	 			<div id="menu_sensor_tag">
+	 				<a href="/system/sensortag_setting" class="main_tag_a"><p class="title" id="menu_sensor_tag_title">Sensor-Tag 관리</p></a>
+	 			</div>
+
+	 			<div id="menu_beacon">
+	 				<a href="/system/beacon_setting" class="main_tag_a"><p class="title" id="menu_beacon_title">beacon 관리</p></a>
+	 			</div>
+
+	 			<div id="menu_gateway">
+					<a href="/system/gateway_setting" class="main_tag_a"><p class="title" id="menu_gateway_title">gateway 관리</p></a>
+				</div>
+	 			
+ 			</div>
+ -->
+			
+		
+		<div id="select">
+			<select id="All_select">
+				<option>검색항목 선택</option>
+			</select>
+			<input type="text" id="All_Search">
+			<button class="btn" id="btn" type="submit"><img class="btn-img" src="/static/img/search.png"></button>
+		</div>
+
+		<div style="margin-top: 10px;">
+			<div id="content_left">
+				<table id="welltagTable" style="text-align: center;">
+                        <thead>
+                            <tr id="TableTitle">
+                                <th>번호</th>
+                                <th>WellTag 아이디</th>
+                                <th>MAC Address</th>
+                                <th>층</th>
+                                <th>배터리량</th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                        </tbody>
+               	</table>
+			</div>
+
+			<div id="content_right">
+				<!-- <div id="main_title">
+					<p>Welltag 관리</p>
+				</div> -->
+				
+				<div id = "Well_TagInfo">
+					<p class="Well_Tag_title">번호</p><p id = "Well_Tag_seq" name="" class ="Well_TagTxt"/></p>
+					
+					<p class="Well_Tag_title">WellTag 아이디</p><input type="text" id = "Well_Tag_id" name="" class ="Well_TagTxt">
+					
+					<p class="Well_Tag_title">*MAC Address</p><input type="text" id = "Well_Tag_Mac" name="" class ="Well_TagTxt"/>
+					
+					<p class="Well_Tag_title">층</p><input type="text" id = "Well_Tag_layer" name="" class ="Well_TagTxt"/>
+					<p class="Well_TagInfo_btn" onclick="addWell_TagInfo()">새로 만들기</p>
+					<p class="Well_TagInfo_btn" onclick="deleteWell_TagInfo()">삭제</p>
+					<p class="Well_TagInfo_btn" onclick="updateWell_TagInfo()">업데이트</p>
+				</div>
+			</div>
+		</div>
+	<!-- </div> -->
+
+	{%endblock%}
+
+
+</body>
+</html>

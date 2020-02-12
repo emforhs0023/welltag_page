@@ -1,0 +1,113 @@
+@import url(https://fonts.googleapis.com/earlyaccess/notosanskr.css);
+*{
+	margin: 0px;
+	padding: 0px;
+	font-family: 'Noto Sans KR', sans-serif;
+}
+#header{
+	background-color: #4da9d9;
+	width: 100%;
+	height: 100px;
+	/*box-shadow: 5px 5px 5px gray;*/
+	z-index: 101;
+}
+body{
+	 background-color: white;
+}
+#content{
+	margin:30px auto;
+	width: 100%;
+	height: 790px;
+}
+
+#footer{
+	clear:both;
+	width: 100%;
+}
+
+#logo{
+	float:left;
+	margin-left:15px;
+	padding: 10px;
+}
+#header #logo img{
+	margin-top:19px;
+	float: left;
+}
+
+#header #logo div{
+	float: left; 
+	margin-top: 72px; 
+	margin-left: 10px;
+}
+
+#header_right{
+	float: right; 
+	margin-right: 10px;
+}
+#MyPAGE_Logout{
+	color:white;
+	float: right;
+}
+#header_right #MyPAGE_Logout a{
+	margin-bottom: 15px;
+	float: left;
+}
+#header_right #MyPAGE_Logout a p{
+	float:left; 
+	font-size: 13px; 
+	margin-top: 3px;
+	color:white;
+}
+#header_right #MyPAGE_Logout p{
+	float:left; 
+	margin-left: 5px; 
+	margin-right: 5px;     
+	font-size: 15px;	
+}
+#time{
+	clear: both; 
+	border: 2px solid white; 
+	border-radius: 30px;
+	text-align: center;
+	width: 150px;
+	margin-top: 38px;
+	color:white;
+}
+#menu_img{
+	position: relative;
+    float: left;
+    margin-left: 435px;
+    top: 2px;
+}
+#footer{
+    background-color: #4da9d9;
+    color: white;
+    float: right;
+}
+#footer span{
+   float: right;
+}
+@media screen and (max-width:1900px) {
+	#menu_img{
+		position: relative;
+	    float: left;
+	    /*margin-left: 500px;*/
+	    top: 2px;
+		margin-left: 153px;
+	}
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 640px) {
+#menu_img {
+		    position: relative;
+		    float: left;
+		    top: 2px;
+		    margin-left: 125px;
+		}
+	#content {
+		height: 1558px;
+	}
+}
+
+
+

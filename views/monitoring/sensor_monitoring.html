@@ -1,0 +1,62 @@
+{%extends "base.html"%}
+
+<html>
+<head>
+	{%block title%}
+		센서 모니터링
+	{%endblock%}
+
+	{%block link%}
+	<link rel="stylesheet" type="text/css" href="/static/css/monitoring/sensor_monitoring.css">
+	{%endblock%}
+
+	{%block script%}
+	<script type="text/javascript" src="/static/js/sensorMonitoring.js"></script>
+	<script type="text/javascript" src="/static/js/lib/jquery.dataTables.min.js"></script>
+	<script type="text/javascript">
+	var	user_id = "{{user_id}}"
+	</script>
+  	{%endblock%}
+</head>
+<body>
+	{%block content%}
+<!-- 		<input type = "hidden" value = "" id = "session_id"> -->
+		<div id="content_area">
+
+				<div id="menu" style = "width:1200px;margin:0 auto;">
+					<span style="color:red;line-height:30px;font-weight:500"># 센서태그 정보는 1분마다 갱신됩니다.</span>
+					<select id = "select_layer">					
+					<input type = "button"  onClick="dust()" value = "미세먼지 농도 기준표" class = "view_modal_table">
+					<input type = "button" onClick="co()" value = "일산화탄소 농도 기준표" class = "view_modal_table">
+					</select>
+				</div>
+			<input type="hidden" value="1" id="layer">
+			<div id="Table" style="clear:both;width:1200px;margin:0 auto;">
+				<table id="welltagTable" style="text-align: center;">
+					<thead>
+						<tr>
+							<th>위치</th>
+							<th>산소 ( % )</th>
+							<th>일산화탄소 ( ppm )</th>
+							<th>온도 ( °C )</th>
+							<th>습도 ( % )</th>
+							<th>미세 먼지 ( ㎍/㎥ )</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+
+		<div id="carbon_monoxide" title="일산화탄소 농도 기준" style="display:none">
+           <img src="/static/img/co_list.jpg"> 
+        </div>
+
+		<div id="fine_dust" title="미세먼지 농도 기준" style="display:none">
+            <img src="/static/img/dust_list.jpg"> 
+        </div>
+	{%endblock%}
+	
+	
+</body>
+</html>

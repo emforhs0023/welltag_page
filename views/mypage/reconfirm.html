@@ -1,0 +1,60 @@
+{%extends "base.html"%}
+
+<html>
+<head>
+	{%block title%}
+		마이페이지
+	{%endblock%}
+
+	{%block link%}
+	<link rel="stylesheet" type="text/css" href="/static/css/mypage/mypage.css">
+	{%endblock%}
+
+	{%block script%}
+	
+  	{%endblock%}
+</head>
+<body>
+	{%block content%}
+	<div id="content_area">
+ 		<div>
+ 			<p id="content_top">마이페이지</p>
+ 		</div>
+
+ 		<div id="main">
+ 			<div style="margin: 0 auto;width: 478px;">
+	 			<div style="margin-top: 30;">
+	 				<div id="reconfirm">
+						<a href="#">
+							<img src="/static/img/reconfirm.jpg" >
+						</a>
+					</div>
+	 			</div>
+	 			<div id="id_main">
+	 				<p id="id_title">ID</p>
+	 				<P id="id_name">아이디명</P>
+	 			</div>
+	 			<div id="password_main">
+	 				<p id="password_title">비밀번호</p>
+	 				<input type="password" id="password_input" placeholder="비밀번호를 입력해주세요"> 
+	 			</div>
+ 			</div>
+ 		</div>
+ 		<div style="margin: 0 auto; width: 317px; margin-top: 17px;">
+	 		<div class="Confirm" id="success">
+	 			<p>확인</p>
+	 		</div>
+	 		<div class="Confirm" id="cancel">
+	 			<p>취소</p>
+	 		</div>
+ 		</div>
+	</div>
+	{%endblock%}
+
+	{%block footer%}
+	<div id="footer"style="background-color: #b1dbe7;
+    "></div>
+    <p>ⓒ 2017 FSRNT Ce,Ltd All Rights reserved</p>
+    {%endblock%}
+</body>
+</html>

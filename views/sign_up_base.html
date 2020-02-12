@@ -1,0 +1,38 @@
+<html>
+<head>
+	<title>
+		{%block title%}{%endblock%}
+	</title>
+	<link rel="stylesheet" type="text/css" href="/static/css/sign_up_base.css">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script type="text/javascript" src="/static/js/lib/jquery.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	{%block link%}{%endblock%}
+	
+  	{%block script%}{%endblock%}
+</head>
+<body>
+	<div id="header">
+		<div id="logo">
+			<a href="/login" style="color: black; text-decoration: none;"><img src="/static/img/logo.png"></a>
+			<!-- <div>낙상모니터링 시스템</div> -->
+		</div>
+			<div style="float: right; margin-right: 10px;" id="header_login">
+			<a href="/login">
+				<p style="float:left; font-size: 13px;margin-top: 3px;">로그인</p>
+			</a>
+		</div>
+	</div>
+	<div id="content">
+		{%block content%}{%endblock%}
+	</div>
+	<div id="footer">
+		
+		<div id="footer">
+			<span>ⓒ 2018 FSRNT Co,Ltd All Rights reserved</span>
+		</div>
+	    
+		
+	</div>
+</body>
+</html>

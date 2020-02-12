@@ -1,0 +1,103 @@
+{%extends "base.html"%}
+
+<html>
+<head>
+	{%block title%}
+		마이페이지
+	{%endblock%}
+
+	{%block link%}
+	<link rel="stylesheet" type="text/css" href="/static/css/mypage/withdrawal.css">
+	{%endblock%}
+
+	{%block script%}
+	
+  	{%endblock%}
+</head>
+<body>
+	{%block content%}
+	<div id="content_area">
+ 		<div>
+ 			<p id="content_top">마이페이지</p>
+ 		</div>
+ 		<div style="margin: 0 auto;width: 618px;">
+ 			<div id="information">
+ 				<a href="/mypage/mypageprivacy"><p class="title" id="information_title">개인정보 변경</p></a>
+ 			</div>
+ 			<div id="change">
+ 				<a href="/mypage/changepassword"><p class="title" id="change_title">비밀번호 변경</p></a>
+ 			</div>
+ 			<div id="secession">
+ 				<a href="/mypage/withdrawal"><p class="title" id="secession_title">회원탈퇴</p></a>
+ 			</div>
+ 		</div>
+
+ 		<div id="main">
+ 			<div style="margin: 0 auto;width: 859px;">
+ 				<div>
+ 					<p id="top_label">
+ 						회원탈퇴에 앞서 <span style="color: #63c4e0;">유의사항 및 안내</span>를 반드시 읽고 진행해 주세요!
+ 					</p>
+ 				</div>
+
+	 			<div id="main_one">
+	 				<div id="main_one_border">
+	 					<div id="main_one_text">
+		 					<p id="main_one_title">
+		 						아이디 재사용 및 복구 불가 안내
+		 					</p>
+		 					<div id="main_one_check">
+			 					<input id="id_check" name="id_check[]" value="1" type="checkbox">
+			 					<p class="check">
+									<span>동의</span>
+								</p>
+							</div>
+		 					<br>
+		 					<p style="clear: both;">회원탈퇴 진행 시 본인을 포함한 타인 모두 <span style="color: #63c4e0;">아이디 재사용이나 복구가 불가능</span> 합니다</p>
+		 					<p style="margin-bottom: 10px;">신중히 선택하신 후 결정해주세요</p>
+	 					</div>
+	 				</div>
+	 			</div>
+	 			<div id="main_two">
+	 				<div id="main_two_border">
+	 					<div style="margin: 0 auto; width: 780px;">
+		 					<p id="main_two_title">회원정보 삭제 안내</p>
+		 					<div id="main_two_check">
+			 					<input id="delete_check" name="delete_check[]" value="1" type="checkbox">
+			 					<p class="check">
+									<span>동의</span>
+								</p>
+							</div>
+		 					<br>
+		 					<p style="clear: both;">회원탈퇴 신청시 <span style="color: #63c4e0;">회원가입 시에 입력된 회원정보는 모두 삭제</span>되며, 삭제한 데이터는 복구되지 않습니다</p>
+		 					<p>회원님이 등록한 게시물(<span style="color: #63c4e0;">Well-Tag 등록, Beacon등록</span> 등)은 회원 탈퇴후에도 삭제되지 않습니다</p>
+		 					<p style="margin-bottom: 10px;">게시물의 삭제를 원하시는 경우네는 반드시 게시물을 <span style="color: #63c4e0;">본인이 먼저 삭제</span>하신 후 탈퇴를 신청하시기 바랍니다.</p>
+	 					</div>
+	 				</div>
+	 			</div>
+	 			<div id="check">
+		 			<input id="all_check" name="all_check[]" value="1" type="checkbox">
+		 			<p class="check">
+		 				<span style="margin-left: 10px;">안내 사항을 모두 확인하였으며, 탈퇴 시 데이터 복구가 불가함에 동의합니다.</span>
+		 			</p>
+	 				</div>
+	 		</div>
+ 		</div>
+ 		<div style="margin: 0 auto; width: 317px; margin-top: 17px;">
+	 		<div class="Confirm" id="success">
+	 			<p>회원탈퇴</p>
+	 		</div>
+	 		<div class="Confirm" id="cancel">
+	 			<p>취소</p>
+	 		</div>
+ 		</div>
+	</div>
+	{%endblock%}
+
+	{%block footer%}
+	<div id="footer"style="background-color: #b1dbe7;
+    "></div>
+    <p>ⓒ 2017 FSRNT Ce,Ltd All Rights reserved</p>
+    {%endblock%}
+</body>
+</html>

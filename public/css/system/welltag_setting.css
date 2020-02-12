@@ -1,0 +1,247 @@
+#content{
+	margin: 0px auto;
+    width: 100%;
+    height: 850px;	
+}
+#menu_well_tag_title{
+	background-color: gray;
+	border: 1px solid gray;
+    border-radius: 5px;
+    color: white;
+}
+/*.main_tag_a{
+	text-decoration: none;
+}
+#menu_well_tag{
+	float: left;
+	
+}
+#menu_sensor_tag{
+	float: left;
+}
+#menu_beacon{
+	float: left;
+}
+#menu_gateway{
+	float: left;
+}
+#menu_sensor_tag_title{
+	color: black;
+    border: 1px solid gray;
+    border-radius: 5px;	
+}
+#menu_well_tag_title{
+	background-color: gray;
+	border: 1px solid gray;
+    border-radius: 5px;
+    color: white;
+}
+.title{
+	margin-left: 81px;
+
+    
+    width: 166px;
+    
+    text-align: center;
+    margin-bottom: 10px;
+    height: 27px;
+    
+}
+#menu_beacon_title{
+	color: black;
+    border: 1px solid gray;
+    border-radius: 5px;
+}
+#menu_gateway_title{
+	color: black;
+    border: 1px solid gray;
+    border-radius: 5px;
+}
+#select{
+	margin-left: 10px;
+	margin-top: 10px;
+	clear: both;
+}
+
+#content_area{
+	clear: both;
+    margin: 0 auto;
+    width: 1500px;
+    height: 500px;
+    background-color: white;
+    padding-top: 23px;
+}*/
+#All_select{
+	float: left;
+    border-radius: 5px 0 0 5px;
+    border: 1px solid gray;
+    border-right: none;
+    margin-top: 20px;
+}
+#All_Search{
+	border-radius: 0 5px 5px 0;
+    height: 23px;
+    border: 1px solid gray;
+    margin-top: 20px;
+}
+#btn img{
+	width: 15px;
+    height: 15px;
+   
+}
+#btn{
+    border: none;
+    background-color: white;
+    position: relative;
+    right: 25px;
+    top: 2px;
+    cursor:pointer
+}
+#content_left{
+	clear: both;
+	margin-left: 10px;
+	width: 70%; 
+	border-top: 2px solid black;
+	border-bottom: 2px solid black; 
+	height: 100%; 
+	float: left;
+	
+}
+#content_right{
+	float: left; 
+	height: 100%; 
+	width: 28%; 
+	background-color: white;
+}
+#main_title{
+	text-align: center;
+    font-weight: 700;
+    font-size: 29px;
+    color: #072664;
+}
+.Well_Tag_title{
+	font-size: 22px;
+	font-weight: 700;
+	height:45px;
+	line-height: 45px;
+}
+.Well_TagTxt{
+	padding-left:10px;
+	width:337px;
+	height:45px;
+	line-height: 45px;
+	border-radius: 10px;
+	font-size: 22px;
+	border:2px solid #BDBDBD;
+	margin-bottom: 16px;	
+}
+#Well_TagInfo{
+	margin-left: 52px;
+}
+.Well_TagInfo_btn{
+	margin:10px 0;
+	display: inline-block;
+	background-color: gray;
+	width:102px;
+	height:40px;
+	line-height: 40px;
+	border-radius: 10px;
+	color:white;
+	border:2px solid gray;
+	text-align: center;
+	cursor:pointer;
+	margin-top: 22px;
+    margin-left: 3px;
+
+}
+.Well_TagInfo_btn:hover{
+	background-color: white;
+	color:gray;
+
+}
+#welltagTable{
+    width:100% !important;
+    border-collapse: collapse;
+
+}
+#welltagTable th{
+    height:50px;
+}
+#welltagTable td{
+    border-collapse: collapse;
+    height:40px;
+    border-top:1px solid gray;
+    border-bottom:1px solid gray;
+    font-weight: 700;
+    letter-spacing:1px;
+}
+
+@media screen and (max-width:1900px) {
+
+	#content_area {
+	    width: 100%;
+	}
+	.Well_Tag_title{
+		font-size: 18px;
+		font-weight: 700;
+		height:37px;
+		line-height: 45px;
+	}
+	
+	.Well_TagTxt{
+		padding-left:10px;
+		width:320px;
+		height:35px;
+		line-height: 45px;
+		border-radius: 10px;
+		font-size: 22px;
+		border:2px solid #BDBDBD;	
+	}
+	.Well_TagInfo_btn{
+		margin:20px 0;
+		display: inline-block;
+		background-color: gray;
+		width:102px;
+		height:40px;
+		line-height: 40px;
+		border-radius: 10px;
+		color:white;
+		border:2px solid gray;
+		text-align: center;
+		cursor:pointer;
+	}
+	#main_title{
+		text-align: center;
+	    font-weight: 700;
+	    font-size: 25px;
+	}
+
+	
+    #Well_TagInfo {
+	    margin-left: 23px;
+	}
+
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 640px) {
+	.Well_TagTxt {
+	    width: 922px;
+	}
+	#content_area {
+	    width: 100%;
+	}
+	#content_left {
+	    margin-left: 0px; 
+	    width: 100%;
+	    height: 100%;
+	}
+	#Well_TagInfo{
+		margin-top: 10px;
+	}
+	#Well_TagInfo{
+		width: 922px;
+	}
+	.Well_TagInfo_btn{
+		width: 170px;
+    	height: 44px;	
+	}
+}

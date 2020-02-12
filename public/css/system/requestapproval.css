@@ -1,0 +1,107 @@
+#content_area{
+	clear: both;
+    margin: 0 auto;
+    width: 1500px;
+    height: 500px;
+    background-color: white;
+    padding-top: 70px;
+}
+#table_zone{
+	margin: 0 auto;
+    width: 1500px;
+    height: 575px;
+    
+    margin-top: 10px;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+}
+#requestTable{
+    width:100% !important;
+    border-collapse: collapse;
+}
+#requestTable th{
+    height:50px;
+    
+}
+#requestTable td{
+    border-collapse: collapse;
+    height:40px;
+    border-top:1px solid gray;
+    border-bottom:1px solid gray;
+    font-weight: 700;
+}
+
+#requestTable button{
+    width:48%;
+    height:95%;
+}
+#deleteApprove{
+    background-color: white;
+    border:1px solid #5D5D5D;
+    border-radius: 5px;
+    color:#5D5D5D;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 3px;
+}
+#waitingApprove{
+    background-color: white;
+    border:1px solid #5D5D5D;
+    border-radius: 5px;
+    color:#5D5D5D;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 3px; 
+}
+#search{
+    border-radius: 0 5px 5px 0;
+    height: 23px;
+    border: 1px solid gray;
+    margin-top: 20px;
+}
+
+#All_select{
+    float: left;
+    border-radius: 5px 0 0 5px;
+    border: 1px solid gray;
+    border-right: none;
+    margin-top: 20px;
+}
+
+#content_area img{
+    width: 15px;
+    height: 15px;
+   
+}
+#btn{
+    border: none;
+    background-color: white;
+    position: relative;
+    right: 25px;
+    top: 2px;
+    cursor:pointer
+}
+
+
+@media screen and (max-width:1900px) {
+    #content_area {
+        clear: both;
+        margin: 0 auto;
+        width: 99%;
+        height: 500px;
+        background-color: white;
+        padding-top: 70px;
+    }
+
+    #table_zone {
+        margin: 0 auto;
+        width: 100%;
+        height: 575px;
+        background-color: #b1dbe7;
+        margin-top: 10px;
+        border: 1px solid gray;
+    }  
+ 
+   
+}
+

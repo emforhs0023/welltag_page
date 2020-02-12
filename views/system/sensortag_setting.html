@@ -1,0 +1,256 @@
+{%extends "system_base.html"%}
+<html>
+<head>
+	{%block title%}
+		센서 태그 관리
+	{%endblock%}
+
+	{%block link%}
+	<link rel="stylesheet" type="text/css" href="/static/css/system/sensor_setting.css">
+	{%endblock%}
+
+  	{%block script%}
+  	<script type="text/javascript" src="/static/js/BeaconAdmin.js"></script>
+  	<script type="text/javascript">
+  		$(function(){
+  			initTable()
+  		})
+  		function initTable(){
+  			$.ajax({
+	  			url:"/system/sensortagInfo",
+	  			method:"get",
+	  			contentType:"application/json",
+	  			success:function(data){
+	  				var TableList = data;
+
+				    table = $("#setting_sensor_table").DataTable({
+				        "destroy":true,
+				        "ordering":false,
+				        "searching": false,
+				        "info": false, 
+				        "scrollY": "598px",
+				        "scrollCollapse": true,
+				        "bLengthChange": false,  
+				        "data": TableList,
+				        "paging": true,
+						"pageLength": 14, 
+				        "columns":[
+				            {"data":"welltag_id", "width":"250px"},
+				            // {"data":"loc_x"},
+				            // {"data":"loc_y"},
+				            {"data":"tag_group", "width":"200px"},
+				            {"data":"location", "width":"250px"},
+				            {"data":"layer", "width":"200px"},
+				            {"data":"battery", "width":"200px"},
+				            {"defaultContent": "<button  id='modi_btn' class = 'reset_btn'>수정</button>", "width":"150px"},
+				            {"defaultContent":"<button id='del_btn' class ='reset_btn'>삭제</button>", "width":"150px"}
+				        ]
+				    })
+				    $("#setting_sensor_table").on("click","#modi_btn",function(){
+				    	var data = table.row($(this).parents("tr")).data();
+				    	
+				    	$("#modi_sensortag_id").html(data.welltag_id)
+						$("#modi_sensortag_group").val(data.tag_group)
+						$("#modi_sensortag_location").val(data.location)
+						$("#modi_sensortag_layer").val(data.layer)
+
+			  			$("#modi_form").dialog({
+				            height:"auto",
+				            width:"600px",
+				            modal : false,
+				            buttons: {
+					            "btn1" :{
+									text : "수정",
+									click:function(){
+										var tag_id = $("#modi_sensortag_id").html()
+										var tag_group = $("#modi_sensortag_group").val()
+										var location = $("#modi_sensortag_location").val()
+										var layer = $("#modi_sensortag_layer").val()
+										var data = {"tag_id":tag_id, "tag_group":tag_group, "location":location, "layer":layer}
+
+										$.ajax({
+											url:"/system/modiSensorTagInfo",
+											contentType:"application/json",
+											method:"put",
+											data:JSON.stringify(data),
+											success:function(data){
+												if(data){
+													alert("수정되었습니다.")
+													initTable()
+												}else{
+													alert("실패되었습니다.")
+												}
+											}
+										})
+										$( this ).dialog( "close" );
+									}	
+								},
+								"btn2" :{
+									text : "취소",	
+									click:function(){
+										$( this ).dialog( "close" );
+									}	
+								}
+							}
+			        	})	
+			  		});
+			  		$("#setting_sensor_table").on("click","#del_btn",function(){
+			  			var data = table.row($(this).parents("tr")).data();
+			  			var welltag_id = data.welltag_id
+			  			$("#selet_tag").html(welltag_id)
+			  			$("#delete_form").dialog({
+				            height:"auto",
+				            width:"600px",
+				            modal : false,
+				            buttons: {
+					            "btn1" :{
+									text : "삭제",
+									click:function(){
+										// console.log(welltag_id)
+										$.ajax({
+											url:"/system/delSensorTagInfo?tag_id="+welltag_id,
+											method:"delete",
+											contentType:"application/json",
+											success:function(data){
+												if(data){
+													alert("삭제되었습니다.")
+													initTable()
+												}else{
+													alert("실패되었습니다.")
+												}
+											}
+										})
+										$( this ).dialog( "close" );
+									}	
+								},
+								"btn2" :{
+									text : "취소",	
+									click:function(){
+										$( this ).dialog( "close" );
+									}	
+								}
+							}
+			        	})	
+			  		});
+	  			}
+	  		})
+  		}	
+  		function addSensorTag(){
+  			$("#add_form").dialog({
+	            height:"auto",
+	            width:"560px",
+	            modal : true,
+	            buttons: {
+		            "btn1" :{
+						text : "추가",
+						click:function(){
+				  			var tag_id = $("#add_sensortag_id").val()
+							var tag_group = $("#add_sensortag_group").val()
+							var location = $("#add_sensortag_location").val()
+							var layer = $("#add_sensortag_layer").val()
+							var data = {"tag_id":tag_id, "tag_group":tag_group, "location":location, "layer":layer}
+
+							$.ajax({
+								url:"/system/addSensorTagInfo",
+								contentType:"application/json",
+								method:"post",
+								data:JSON.stringify(data),
+								success:function(data){
+									if(data){
+										alert("추가되었습니다.")
+										initTable()
+									}else{
+										alert("실패되었습니다.")
+									}
+								}
+							})
+							$( this ).dialog( "close" );
+						}	
+					},
+					"btn2" :{
+						text : "취소",	
+						click:function(){
+							$( this ).dialog( "close" );
+						}	
+					}
+				}
+		    })
+  		}
+		    
+
+
+  	</script>
+  	{%endblock%}
+</head>
+<body>
+	{%block content%}
+	<!-- <div id="content_area">
+		<div style="margin: 0 auto;width: 1003px;">
+ 			<div id="menu_well_tag">
+ 				<a href="/system/welltag_setting" class="main_tag_a"><p class="title" id="menu_well_tag_title">Well-Tag 관리</p></a>
+ 			</div>
+
+ 			<div id="menu_sensor_tag">
+ 				<a href="/system/sensortag_setting" class="main_tag_a"><p class="title" id="menu_sensor_tag_title">Sensor-Tag 관리</p></a>
+ 			</div>
+
+ 			<div id="menu_beacon">
+ 				<a href="/system/beacon_setting" class="main_tag_a"><p class="title" id="menu_beacon_title">beacon 관리</p></a>
+ 			</div>
+
+ 			<div id="menu_gateway">
+					<a href="/system/gateway_setting" class="main_tag_a"><p class="title" id="menu_gateway_title">gateway 관리</p></a>
+			</div>
+		</div> -->
+	
+	<br>
+
+		<div style="clear:both;width:1200px;margin:0 auto;margin-bottom:60px;">
+			<input type ="button" value="추가" id="add_btn" onClick="addSensorTag()">
+			<table id="setting_sensor_table" style="border-top:1px solid gray;">
+				<thead>
+					<tr>
+						<th>SensorTag 아이디</th>
+	<!-- 					<th>X</th>
+						<th>Y</th> -->
+						<th>Tag Group</th>
+						<th>위치</th>
+						<th>Layer</th>
+						<th>배터리</th>
+						<th>수정</th>
+						<th>삭제</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+		<div id="add_form" title="추가" style="display:none">
+	        <p class="menu_title">센서태그 아이디</p>
+	        <input type = "text" class = "menu_input" id = "add_sensortag_id">
+	        <p class="menu_title">태그 그룹</p>
+	        <input type = "text" class = "menu_input" id = "add_sensortag_group">
+	        <p class="menu_title">위치</p>
+	        <input type = "text" class = "menu_input" id = "add_sensortag_location">
+	        <p class="menu_title">층</p>
+	        <input type = "text" class = "menu_input" id = "add_sensortag_layer">
+	    </div>
+	    <div id="modi_form" title="수정" style="display:none">
+	        <p style="font-size:24px;font-weight:700"id = "modi_sensortag_id"></p>
+	        <p class="menu_title">태그 그룹</p>
+	        <input type = "text" class = "menu_input" id = "modi_sensortag_group">
+	        <p class="menu_title">위치</p>
+	        <input type = "text" class = "menu_input" id = "modi_sensortag_location">
+	        <p class="menu_title">층</p>
+	        <input type = "text" class = "menu_input" id = "modi_sensortag_layer">
+	    </div>
+	    <div id="delete_form" title="삭제" style="display:none">
+	        <br>
+	        <p id="selet_tag" style="text-align:center;font-size:20px;font-weight:700"></p>
+	        <br>
+	        <p>해당 센서태그를 삭제하시겠습니까?</p>
+	    </div>
+    <!-- </div> -->
+	{%endblock%}
+
+</body>
+</html>

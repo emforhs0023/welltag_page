@@ -1,0 +1,214 @@
+{%extends "sign_up_base.html"%}
+<html>
+<head>
+	{%block title%}
+		회원가입
+	{%endblock%}
+
+	{%block link%}
+	<link rel="stylesheet" type="text/css" href="/static/css/login/signup.css">
+
+	{%endblock%}
+
+	{%block script%}
+	<script type="text/javascript" src = "/static/js/signup.js"></script>
+	<script type="text/javascript">
+		function doubleCheck(){
+			var user_id = $("#id_input").val()
+			if(user_id.length < 4){
+				alert("아이디는 5자이상이여야 합니다")
+			}else{
+				var data = {"user_id": user_id}
+				$.ajax({
+					url:"/login/double_check",
+					contentType:"application/json",
+					method:"post",
+					data: JSON.stringify(data),
+					success:function(data){
+						// console.log(data)
+						if(data){
+							$("#double_msg").css({"color":"blue","font-size":"12px","line-height":"25px"})
+							$("#double_msg").html("&nbsp&nbsp사용할 수 있는 아이디입니다.")
+							$("#double_check_btn").attr("disabled","disabled")
+						}else{
+							$("#double_msg").css({"color":"red","font-size":"12px","line-height":"25px"})
+							$("#double_msg").html("&nbsp&nbsp해당 아이디가 존재합니다.")
+						}
+					}
+				})	
+			}
+		}
+		$(function(){
+			$("#password_input").keyup(function(){
+			   $('font[name=check]').text('');
+			})
+
+			$("#Confirm_input").keyup(function(){
+				if($("#password_input").val()!=$("#Confirm_input").val()){
+				    $('font[name=check]').text('');
+				    $('font[name=check]').html("&nbsp&nbsp비밀번호가 일치하지 않습니다.");
+				    $('font[name=check]').css({"color":"red"})
+		   		}else{
+				    $('font[name=check]').text('');
+				    $('font[name=check]').html("&nbsp&nbsp비밀번호가 일치합니다.");
+					$('font[name=check]').css({"color":"blue"})
+				}
+			});
+		})
+
+		function signup(){
+			var user_id = $("#id_input").val();
+			var password = $("#password_input").val();
+			var password_check = $("#Confirm_input").val(); 
+			var user_name = $("#name_input").val();
+			var user_sex = $("input[name=chk_sex]:checked").val();
+			var user_phone = $("#phone_number").val();
+			var user_position = $("#user_position").val();
+			var layer = $("#layer").val();
+
+
+			if(user_id == ""){
+			alert("아이디를 입력하세요.")
+				$("#id_input").focus();
+				return false;
+			}
+			if(password == ""){
+				alert("비밀번호를 입력하세요.")	
+				$("#password_input").focus();
+				return false;
+			}
+			if(password_check == ""){
+				alert("확인 비밀번호를 입력하세요")		
+				$("#Confirm_input").focus();
+				return false;
+			}
+			if(user_name == ""){
+				alert("이름을 입력하세요")			
+				$("#name_input").focus();
+				return false;
+			}
+			if(user_sex == undefined){
+				alert("성별을 선택해주세요")	
+				return false;
+			}
+			if(user_phone == ""){
+				alert("휴대폰 번호를 입력하세요")			
+				$("#phone_number").focus();
+				return false;
+			}
+			if(user_position == "none"){
+				alert("직책을 선택해주세요")			
+				return false;
+			}
+			if(layer == "none"){
+				alert("담당 층을 선택해주세요")			
+				return false;	
+			}
+			// console.log($("#double_check_btn").disabled)
+			//아이디 중복확인 성공 여부
+			if(document.getElementById("double_check_btn").disabled){
+				//비밀번호 일치하는지
+				if(password == password_check){	
+					var data = {"user_id": user_id,"password": password,"password_check": password_check,"user_name": user_name,"user_sex": user_sex,"user_phone": user_phone,"user_position": user_position,"layer": layer}
+
+					$.ajax({
+						url : "/login/signup",
+						method : "post",
+						contentType:"application/json",
+						data: JSON.stringify(data),
+						success:function(data){
+							if(data){
+								$("#signed_up").dialog({
+									height:"auto",
+									width:"400px",
+									modal : true,
+									buttons: {
+										"btn1" : {
+											text : "확인",
+											id : "add_signed_up_button",
+											click:function(){
+												location.href = "/login"
+											}
+										}
+									}
+								})
+								
+							}else{
+								location.href = "/login/sign"
+							}
+						}
+					})
+				}else{
+					alert("비밀번호가 일치하지 않습니다.")
+				}
+			}else{
+				alert("중복확인을 진행해주세요")
+			}
+		}
+	</script>
+  	{%endblock%}
+</head>
+<body>
+ 	{%block content%}
+ 	<div id="content_area">
+		<div>
+			<p id="content_top">회원가입</p>
+		</div>
+		<div id="main">
+ 			<div style="margin-left: 70px; margin-top: 40px;">
+		 		<div id="id">
+		 			<P class="TypeName">ID</P>
+		 			<input type="text" class="typing" id="id_input">
+		 			<input type="button" class="clickbutton" onclick="doubleCheck()" id="double_check_btn"value ="중복확인">
+		 			<p id="double_msg"></p>
+		 		</div>
+		 		<div id="password">
+		 			<P class="TypeName" style="margin-top: 24px;">비밀번호</P>
+		 			<input type="password" class="typing" id="password_input">
+		 		</div>
+		 		<div id="password_Confirm">
+		 			<P class="TypeName" style="margin-top: 23px;">비밀번호 확인</P>
+		 			<input type="password" class="typing" id="Confirm_input"><br>
+		 			<font name="check" style="clear:both;font-size:12px;line-height:25px"></font>
+		 		</div>
+		 		<div id="name">
+		 			<P class="TypeName" style="margin-top: 25px;">이름</P>
+		 			<input type="text" class="typing" id="name_input">
+		 		</div>
+		 		<div id="sex">
+					<P class="TypeName" style="margin-top: 14px;" >성별</P>
+					<input type="radio" name="chk_sex" id="man_input" value="0"> 남자
+					<input type="radio" name="chk_sex"  id="Woman_input" value="1"> 여자
+				</div>
+				<div id="cellphone">
+					<P class="TypeName" style="margin-top: 22px;">휴대폰</P>
+					<input type="text" class="typing" id="phone_number" style="margin-left: 85px;">
+				</div>
+				<div id="hospital" style="clear:both">
+					<P class="TypeName" style="clear: both;margin-top: 23px;">병원</P>
+					<select class="hospital_select" id="user_position">
+						<option value = "none" selected>직책</option>
+						<option value = "의사" >의사</option>
+						<option value = "간호사" >간호사</option>
+						<option value = "간호조무사" >간호조무사</option>
+						<option value = "코디네이터" >코디네이터</option>
+					</select>
+					<select class="hospital_select" style="margin-left: 0px;" id="layer"> 
+						<option value = "none">근무 층</option>
+					</select>
+				</div>
+	 		</div>		
+		</div>
+		<div style="margin: 0 auto; width: 317px; margin-top: 17px;">
+	 		<input type="button" class="Confirm" id="success" value="회원가입" onClick="signup()">
+	 		<input type="button" class="Confirm" id="cancel" value="취소" onClick="returnLogin()">
+		</div>
+
+		<div id="signed_up" title="회원가입" style="display:none">
+			<p style="text-align:center;">회원가입이 완료되었습니다</p>
+			<p style="text-align:center;"><span style="color:#31859c">승인 완료</span> 후 서비스 이용 가능합니다</p>
+		</div>
+	</div>
+ 	{%endblock%}
+</body>
+</html>

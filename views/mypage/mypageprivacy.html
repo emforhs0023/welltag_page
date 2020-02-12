@@ -1,0 +1,79 @@
+{%extends "base.html"%}
+
+<html>
+<head>
+	{%block title%}
+		마이페이지
+	{%endblock%}
+
+	{%block link%}
+	<link rel="stylesheet" type="text/css" href="/static/css/mypage/mypageprivacy.css">
+	{%endblock%}
+
+	{%block script%}
+	
+  	{%endblock%}
+</head>
+<body>
+	{%block content%}
+	<div id="content_area">
+ 		<div>
+ 			<p id="content_top">마이페이지</p>
+ 		</div>
+ 		<div style="margin: 0 auto;width: 618px;">
+ 			<div id="information">
+ 				<a href="/mypage/mypageprivacy"><p class="title" id="information_title">개인정보 변경</p></a>
+ 			</div>
+ 			<div id="change">
+ 				<a href="/mypage/changepassword"><p class="title" id="change_title">비밀번호 변경</p></a>
+ 			</div>
+ 			<div id="secession">
+ 				<a href="/mypage/withdrawal"><p class="title" id="secession_title">회원탈퇴</p></a>
+ 			</div>
+ 		</div>
+
+ 		<div id="main">
+ 			<div style="margin: 0 auto;width: 500px;">
+	 			<div style="margin-top: 30;">
+	 				<p id="name">이름</p>
+	 				<p id="name_title">김OO</p>
+	 			</div>
+	 			<div id="contact">
+	 				<p id="contact_title">연락처</p>
+	 				<P id="contact_number">010-1234-5678</P>
+	 				<p class="clickbutton" onclick="()">변경</p>
+	 			</div>
+	 			<div id="hospital_main">
+	 				<p id="hospital_title">병원정보</p>
+	 				<select class="select" id="job">
+	 					<option>선택</option>
+	 					<option>의사</option>
+	 					<option>간호사</option>
+	 					<option>간호조무사</option>
+	 					<option>코디네이터</option>
+	 				</select>
+	 				<select class="select" id="layer">
+	 					<option>선택</option>
+	 				</select>
+	 				<p class="clickbutton" onclick="()" style="width:77px">승인요청</p>
+	 			</div>
+ 			</div>
+ 		</div>
+ 		<div style="margin: 0 auto; width: 317px; margin-top: 17px;">
+	 		<div class="Confirm" id="success">
+	 			<p>확인</p>
+	 		</div>
+	 		<div class="Confirm" id="cancel">
+	 			<p>취소</p>
+	 		</div>
+ 		</div>
+	</div>
+	{%endblock%}
+
+	{%block footer%}
+	<div id="footer"style="background-color: #b1dbe7;
+    "></div>
+    <p>ⓒ 2017 FSRNT Ce,Ltd All Rights reserved</p>
+    {%endblock%}
+</body>
+</html>

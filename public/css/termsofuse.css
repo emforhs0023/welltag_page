@@ -1,0 +1,17 @@
+#content_area1{
+   	width: 1000px;
+    margin: 0 auto;
+    margin-top: 50px;
+    height: 790px;
+}
+#content_top{
+	text-align: center;
+	margin-bottom: 10px;
+    font-size: 29px;
+    font-weight: 700;
+}
+#main{
+	height: 455px;
+    border-bottom: 1px solid gray;
+    border-top: 1px solid gray;
+}
