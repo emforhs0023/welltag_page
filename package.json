@@ -16,7 +16,7 @@
     "cors": "^2.8.4",
     "d3": "^5.5.0",
     "datatable": "^2.0.2",
-    "datatables.net": "^1.10.19",
+    "datatables.net": "^1.10.22",
     "express": "^4.15.4",
     "express-session": "^1.15.5",
     "http": "0.0.0",
