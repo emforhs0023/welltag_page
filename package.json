@@ -14,7 +14,7 @@
     "body-parser": "^1.17.2",
     "bootstrap": "^4.1.2",
     "cors": "^2.8.4",
-    "d3": "^5.5.0",
+    "d3": "^7.6.1",
     "datatable": "^2.0.2",
     "datatables.net": "^1.10.19",
     "express": "^4.15.4",
